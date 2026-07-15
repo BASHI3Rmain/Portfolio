@@ -5,171 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bashar Shaaban | Portfolio</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-        h1 { color: #333; }
+        /* Base Page Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+
+        /* Header Area */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+            color: #222;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-top: 0;
+        }
+
+        /* Tab Navigation Bar */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 30px;
+            padding-bottom: 0;
+        }
+
+        /* Individual Tab Styling */
+        .tab-link {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            margin: 0 5px -2px 5px; 
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Hover State */
+        .tab-link:hover {
+            background-color: #f0f0f0;
+            color: #000;
+        }
+
+        /* Active/Selected Tab State */
+        .tab-link.active {
+            background-color: #fff;
+            color: #0056b3; 
+            border-color: #ccc;
+            border-bottom: 2px solid #fff; 
+        }
+
+        /* Section Layouts */
+        section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #222;
+        }
+
+        /* Grid layout for Technical Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .skills-category h3 {
+            color: #0056b3;
+            margin-top: 0;
+        }
+
+        .skills-category p {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome to My Portfolio</h1>
-    <p>Site is currently under construction. Stay tuned!</p>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Bashar Shaaban</h1>
+        <p>Systems and Computing Engineering Student</p>
+    </header>
+
+    <!-- Tab Navigation Bar (Skills is Active) -->
+    <nav class="tab-navigation">
+        <a href="index.html" class="tab-link active">Skills</a>
+        <a href="experience.html" class="tab-link">Experience</a>
+        <a href="projects.html" class="tab-link">Projects</a>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        <section id="skills">
+            <h2>Technical Skills</h2>
+            <div class="skills-grid">
+                
+                <!-- Category 1 -->
+                <div class="skills-category">
+                    <h3>Software & Languages</h3>
+                    <p><strong>Programming:</strong> C, C++, C#, Python, Java, MATLAB, Linux</p>
+                    <p><strong>Tools & Frameworks:</strong> Docker, Git, JIRA, SharePoint Online, EDI, SPS Commerce</p>
+                    <p><strong>Design & Modeling:</strong> SolidWorks, AutoCAD, Blender</p>
+                </div>
+                
+                <!-- Category 2 -->
+                <div class="skills-category">
+                    <h3>Hardware & Systems</h3>
+                    <p><strong>Engineering:</strong> Embedded Systems, Digital Signal Processing, Systems Maintenance, Controls & Automation</p>
+                    <p><strong>Manufacturing:</strong> Soldering, Wiring, Welding, CNC Machining, Lathes, Drill Presses, Axis-machines, 3D Printing</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
 </body>
 </html>
-
-<section id="about">
-    <h1>Bashar Shaaban</h1>
-    <h2>Systems & Computing Engineering Student</h2>
-    <p>
-        I focus on the intersection of hardware efficiency, digital signal processing, 
-        and robust software systems. I am passionate about optimizing systems, robotics, 
-        building hardware solutions, and writing clean, scalable code.
-    </p>
-</section>
-
-
-
-<section id="Personal Engineering Projects">
-    <h2>Featured Projects</h2>
-
-    <!-- Project 1: Focus on Signal Processing & Systems -->
-    <div class="project-card">
-        <h3>Digital Signal Processing & System Response Analysis</h3>
-        <p class="project-tech"><strong>Technologies:</strong> MATLAB, Simulink, Git</p>
-        <p>
-            Designed, simulated, and analyzed FIR and IIR filters to optimize system response 
-            and stability profiles. Developed comprehensive transfer functions to evaluate damping 
-            ratios, ensuring strict adherence to performance and signal integrity constraints.
-        </p>
-        <a href="https://github.com/BASHI3Rmain" class="project-link">View Repository</a>
-    </div>
-
-    <!-- Project 2: Focus on Hardware, Systems, or Embedded Systems -->
-    <div class="project-card">
-        <h3>Modular Hardware Integration & Systems Maintenance</h3>
-        <p class="project-tech"><strong>Technologies:</strong> Custom PC Architecture, Modular Power Delivery, Diagnostic Testing</p>
-        <p>
-            Engineered custom high-performance computer setups, troubleshooting technical failures down to individual components. 
-            Managed complex modular power distribution, analyzed memory stability configurations, and conducted 
-            multimeter-level diagnostics on electrical hardware to ensure operational reliability and peak thermal efficiency.
-        </p>
-        <a href="https://github.com/BASHI3Rmain" class="project-link">View Repository</a>
-    </div>
-</section>
-
-
-<!-- Technical Skills Section -->
-<section id="Skills">
-    <h2>Technical Skills</h2>
-    <div class="skills-grid">
-        <div>
-            <h3>Software & Languages</h3>
-            <p><strong>Programming:</strong> C, C++, C#, Python, Java, MATLAB, SQL, Linux</p>
-            <p><strong>Tools & Frameworks:</strong> Docker, Git, JIRA, SharePoint Online, EDI, SPS Commerce</p>
-            <p><strong>Design & Modeling:</strong> SolidWorks, AutoCAD, Blender</p>
-        </div>
-        <div>
-            <h3>Hardware & Systems</h3>
-            <p><strong>Engineering:</strong> Embedded Systems, Digital Signal Processing, Systems Maintenance, Controls & Automation</p>
-            <p><strong>Manufacturing & Lab Work:</strong> Soldering, Wiring, Welding, CNC Machining, Lathes, Drill Presses, Axis-machines, 3D Printing</p>
-        </div>
-        <div>
-            <h3>Certifications & Safety</h3>
-            <p>WHMIS, First Aid, Welding Certification, Machine Shop Safety, Lean Manufacturing (5S), Quality Assurance (QA)</p>
-        </div>
-    </div>
-</section>
-
-<hr>
-
-<!-- Professional Experience Section -->
-<section id="Experience">
-    <h2>Professional Experience</h2>
-
-    <!-- Role 1: Valcom -->
-    <div class="job-card">
-        <div class="job-header">
-            <h3>Lean Manufacturing System Process Co-op</h3>
-            <span class="job-meta"><strong>Valcom</strong> | Jan 2026 – Apr 2026</span>
-        </div>
-        <ul>
-            <li>Implemented 5S organizational systems and advanced CMMS training to optimize onboarding and equipment integration workflows.</li>
-            <li>Drove measurable efficiency improvements across facility maintenance and manufacturing operations.</li>
-            <li>Applied a foundational understanding of electromagnetic antenna concepts to draft comprehensive technical creation and assembly manuals.</li>
-        </ul>
-    </div>
-
-    <!-- Role 2: Trophy Foods -->
-    <div class="job-card">
-        <div class="job-header">
-            <h3>IT Support & Project Lead Co-op</h3>
-            <span class="job-meta"><strong>Trophy Foods Inc.</strong> | Apr 2024 – Sept 2024</span>
-        </div>
-        <ul>
-            <li>Served as the lead developer for a custom SharePoint Online website and integrated applications, expanding internal company processes.</li>
-            <li>Designed and deployed automated software systems, training resources, and technical logbooks to streamline cross-departmental operations.</li>
-            <li>Resolved high volumes of IT helpdesk tickets with strict attention to technical documentation and clear communication.</li>
-        </ul>
-    </div>
-
-    <!-- Role 3: U of Guelph Lab Tech -->
-    <div class="job-card">
-        <div class="job-header">
-            <h3>Computer Lab Technician</h3>
-            <span class="job-meta"><strong>University of Guelph</strong> | Jan 2023 – Apr 2025</span>
-        </div>
-        <ul>
-            <li>Executed over 300 successful computer setups, clean hardware installs, and high-level software troubleshooting cycles.</li>
-            <li>Maintained university computer labs, SQL server configurations, asset functionality, and critical server-room wire management.</li>
-            <li>Leveraged software design frameworks to assist engineering students with real-time debugging and programming logic constraints.</li>
-        </ul>
-    </div>
-
-    <!-- Role 4: SureCure Aligners -->
-    <div class="job-card">
-        <div class="job-header">
-            <h3>Automation Operator and Technician</h3>
-            <span class="job-meta"><strong>SureCure Aligners</strong> | Apr 2022 – Sept 2022</span>
-        </div>
-        <ul>
-            <li>Monitored, maintained, and calibrated custom automated and manual fabrication machines in a fast-paced environment producing 500+ items daily.</li>
-            <li>Performed high-precision Quality Assurance (QA) inspections to verify compliance with micro-scale dimensional design specifications.</li>
-            <li>Multitasked across multiple hardware stations, delivering technical support and operator instructions to maintain zero-downtime quotas.</li>
-        </ul>
-    </div>
-</section>
-
-<hr>
-
-<!-- Engineering Extracurriculars -->
-<section id="Engineering Extracurriculars">
-    <h2>Engineering Projects & Leadership</h2>
-
-    <!-- Project 1: FIRST Robotics -->
-    <div class="project-card">
-        <div class="project-header">
-            <h3>Robotics Mechanical Design Engineer</h3>
-            <span class="project-meta"><strong>FIRST Robotics Team</strong> | Oct 2019 – Present</span>
-        </div>
-        <p>
-            Co-led structural manufacturing under aggressive timelines to build intricate, large-scale mobile robots compliant with precise technical rulebooks. 
-            Utilized SolidWorks, AutoCAD, and Blender to blueprint structures down to a tolerance of 1/1000th of an inch. Executed manual and automated machining, 
-            structural welding, circuit wiring, and custom 3D printing, while incorporating Java, Python, and C++ codebases for full remote-control stability.
-        </p>
-    </div>
-
-    <!-- Project 2: Autonomous Device -->
-    <div class="project-card">
-        <div class="project-header">
-            <h3>Autonomous Mobile Device (Engineering Design)</h3>
-            <span class="project-meta"><strong>University of Guelph</strong> | Fall 2022 – 2023</span>
-        </div>
-        <p>
-            Collaborated in a 5-person engineering team to design and manufacture an autonomous mechanical vehicle capable of negotiating rugged terrain to 
-            accurately launch objects via an integrated magnetic projectile system. Programmed embedded firmware layouts in C++ utilizing Arduinos. 
-            Achieved the highest overall manufacturing and performance evaluation score out of several hundred competing engineering teams.
-        </p>
-    </div>
-</section>
-
-
 
 

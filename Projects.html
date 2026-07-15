@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bashar Shaaban | Projects</title>
+    <style>
+        /* Base Page Styles (Identical to index.html) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+
+        /* Header Area */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+            color: #222;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-top: 0;
+        }
+
+        /* Tab Navigation Bar */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 30px;
+            padding-bottom: 0;
+        }
+
+        /* Individual Tab Styling */
+        .tab-link {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            margin: 0 5px -2px 5px; 
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Hover State */
+        .tab-link:hover {
+            background-color: #f0f0f0;
+            color: #000;
+        }
+
+        /* Active/Selected Tab State */
+        .tab-link.active {
+            background-color: #fff;
+            color: #0056b3; 
+            border-color: #ccc;
+            border-bottom: 2px solid #fff; 
+        }
+
+        /* Section Layouts */
+        section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #222;
+            margin-bottom: 25px;
+        }
+
+        /* Project Formatting */
+        .project-card {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px dashed #eaeaea;
+        }
+
+        .project-card:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .project-header h3 {
+            margin: 0;
+            color: #0056b3;
+            font-size: 1.3rem;
+        }
+
+        .project-meta {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+        }
+
+        ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bashar Shaaban</h1>
+        <p>Systems and Computing Engineering Student</p>
+    </header>
+
+    <nav class="tab-navigation">
+        <a href="index.html" class="tab-link">Skills</a>
+        <a href="experience.html" class="tab-link">Experience</a>
+        <a href="projects.html" class="tab-link active">Projects</a>
+    </nav>
+
+    <main>
+        <section id="projects">
+            <h2>Engineering Projects & Leadership</h2>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Robotics Mechanical Design Engineer</h3>
+                    <span class="project-meta"><strong>FIRST Robotics Team</strong> | Oct 2019 – Present</span>
+                </div>
+                <p>Co-led structural manufacturing under aggressive timelines to build intricate, large-scale mobile robots compliant with precise competitive technical rulebooks.</p>
+                <ul>
+                    <li>Utilized SolidWorks, AutoCAD, and Blender to blueprint structures down to high structural tolerance (1/1000th of an inch).</li>
+                    <li>Executed manual and automated machining, structural welding, circuit wiring, and custom 3D printing.</li>
+                    <li>Integrated Java, Python, and C++ codebases for full mobile platform control and remote-control stability.</li>
+                </ul>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Autonomous Mobile Device (Engineering Design)</h3>
+                    <span class="project-meta"><strong>University of Guelph</strong> | Fall 2022 – 2023</span>
+                </div>
+                <p>Collaborated in a 5-person engineering team to design, document, and manufacture an autonomous mechanical vehicle capable of negotiating rugged terrain and launching physical targets.</p>
+                <ul>
+                    <li>Integrated a custom Magnetic Projectile Firing mechanism engineered for high targeting accuracy.</li>
+                    <li>Programmed embedded system layouts and microcontrollers in C++ utilizing Arduinos.</li>
+                    <li>Achieved the highest overall manufacturing and performance design score out of several hundred competing engineering teams.</li>
+                </ul>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Mobile Laser Point Device</h3>
+                    <span class="project-meta"><strong>Personal Project</strong> | 2021</span>
+                </div>
+                <p>Independently designed and built a physical tracking/targeting mechanical device operated via a manual joystick configuration.</p>
+                <ul>
+                    <li>Coded device behaviors from scratch using C++ (with a secondary C# version) to achieve 270-degree 3D rotational accuracy.</li>
+                    <li>Assembled the structural mechanism with a limited custom-parts inventory, executing manual wiring, hardware soldering, and designing a makeshift integrated power cell.</li>
+                </ul>
+            </div>
+
+        </section>
+    </main>
+
+</body>
+</html>
