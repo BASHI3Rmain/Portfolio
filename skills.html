@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bashar Shaaban | Portfolio</title>
+    <title>Bashar Shaaban | Skills</title>
     <style>
-        /* Base Page Styles */
+        /* Base styles identical to index.html */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -16,7 +16,6 @@
             background-color: #fafafa;
         }
 
-        /* Header Area */
         header {
             text-align: center;
             margin-bottom: 40px;
@@ -34,7 +33,6 @@
             margin-top: 0;
         }
 
-        /* Tab Navigation Bar */
         .tab-navigation {
             display: flex;
             justify-content: center;
@@ -43,7 +41,6 @@
             padding-bottom: 0;
         }
 
-        /* Individual Tab Styling */
         .tab-link {
             text-decoration: none;
             color: #555;
@@ -57,13 +54,11 @@
             transition: all 0.2s ease-in-out;
         }
 
-        /* Hover State */
         .tab-link:hover {
             background-color: #f0f0f0;
             color: #000;
         }
 
-        /* Active/Selected Tab State */
         .tab-link.active {
             background-color: #fff;
             color: #0056b3; 
@@ -71,7 +66,6 @@
             border-bottom: 2px solid #fff; 
         }
 
-        /* Section Layouts */
         section {
             background: #fff;
             padding: 30px;
@@ -86,7 +80,6 @@
             color: #222;
         }
 
-        /* Grid layout for Technical Skills */
         .skills-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -111,46 +104,36 @@
 </head>
 <body>
 
-    <!-- Header Section -->
     <header>
         <h1>Bashar Shaaban</h1>
         <p>Systems and Computing Engineering Student</p>
     </header>
 
-    <!-- Tab Navigation Bar (Skills is Active) -->
     <nav class="tab-navigation">
-        <a href="index.html" class="tab-link active">Skills</a>
+        <a href="index.html" class="tab-link">About Me</a>
+        <a href="skills.html" class="tab-link active">Skills</a>
         <a href="experience.html" class="tab-link">Experience</a>
         <a href="projects.html" class="tab-link">Projects</a>
-        <a href="about.html" class="tab-link">About Me</a>
     </nav>
 
-    <!-- Main Content Area -->
     <main>
         <section id="skills">
             <h2>Technical Skills</h2>
             <div class="skills-grid">
-                
-                <!-- Category 1 -->
                 <div class="skills-category">
                     <h3>Software & Languages</h3>
                     <p><strong>Programming:</strong> C, C++, C#, Python, Java, MATLAB, Linux</p>
                     <p><strong>Tools & Frameworks:</strong> Docker, Git, JIRA, SharePoint Online, EDI, SPS Commerce</p>
                     <p><strong>Design & Modeling:</strong> SolidWorks, AutoCAD, Blender</p>
                 </div>
-                
-                <!-- Category 2 -->
                 <div class="skills-category">
                     <h3>Hardware & Systems</h3>
                     <p><strong>Engineering:</strong> Embedded Systems, Digital Signal Processing, Systems Maintenance, Controls & Automation</p>
                     <p><strong>Manufacturing:</strong> Soldering, Wiring, Welding, CNC Machining, Lathes, Drill Presses, Axis-machines, 3D Printing</p>
                 </div>
-
             </div>
         </section>
     </main>
 
 </body>
 </html>
-
-
