@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bashar Shaaban | Portfolio</title>
+    <title>Bashar Shaaban | About Me</title>
     <style>
-        /* Base Page Styles */
+        /* Base Page Styles (Identical to other pages) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -71,7 +71,7 @@
             border-bottom: 2px solid #fff; 
         }
 
-        /* Section Layouts */
+        /* Section Layout */
         section {
             background: #fff;
             padding: 30px;
@@ -84,73 +84,71 @@
             padding-bottom: 10px;
             margin-top: 0;
             color: #222;
+            margin-bottom: 20px;
         }
 
-        /* Grid layout for Technical Skills */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        /* Bio Layout */
+        .about-content {
+            font-size: 1.1rem;
+            color: #444;
         }
 
-        @media (max-width: 600px) {
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
+        .about-content p {
+            margin-bottom: 20px;
         }
 
-        .skills-category h3 {
-            color: #0056b3;
+        /* Highlight box for contact/interests */
+        .highlight-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0056b3;
+            padding: 15px 20px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box h3 {
             margin-top: 0;
-        }
-
-        .skills-category p {
-            margin: 10px 0;
+            color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
     <header>
         <h1>Bashar Shaaban</h1>
         <p>Systems and Computing Engineering Student</p>
     </header>
 
-    <!-- Tab Navigation Bar (Skills is Active) -->
     <nav class="tab-navigation">
-        <a href="index.html" class="tab-link active">Skills</a>
+        <a href="index.html" class="tab-link">Skills</a>
         <a href="experience.html" class="tab-link">Experience</a>
         <a href="projects.html" class="tab-link">Projects</a>
-        <a href="about.html" class="tab-link">About Me</a>
+        <a href="about.html" class="tab-link active">About Me</a>
     </nav>
 
-    <!-- Main Content Area -->
     <main>
-        <section id="skills">
-            <h2>Technical Skills</h2>
-            <div class="skills-grid">
-                
-                <!-- Category 1 -->
-                <div class="skills-category">
-                    <h3>Software & Languages</h3>
-                    <p><strong>Programming:</strong> C, C++, C#, Python, Java, MATLAB, Linux</p>
-                    <p><strong>Tools & Frameworks:</strong> Docker, Git, JIRA, SharePoint Online, EDI, SPS Commerce</p>
-                    <p><strong>Design & Modeling:</strong> SolidWorks, AutoCAD, Blender</p>
-                </div>
-                
-                <!-- Category 2 -->
-                <div class="skills-category">
-                    <h3>Hardware & Systems</h3>
-                    <p><strong>Engineering:</strong> Embedded Systems, Digital Signal Processing, Systems Maintenance, Controls & Automation</p>
-                    <p><strong>Manufacturing:</strong> Soldering, Wiring, Welding, CNC Machining, Lathes, Drill Presses, Axis-machines, 3D Printing</p>
-                </div>
+        <section id="about">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <p>
+                    Hello! I'm <strong>Bashar Shaaban</strong>, a Systems and Computing Engineering student at the University of Guelph. I specialize in bridging the gap between software design and hands-on physical manufacturing. 
+                </p>
+                <p>
+                    My technical journey spans across designing firmware for embedded systems to assembling, customizing, and modifying high-precision hardware. Whether I'm configuring custom 3D printer hardware, optimizing automation scripts, or fabricating complex physical assemblies in a machine shop, I thrive on engineering solutions that are both elegant and functional.
+                </p>
+                <p>
+                    With hands-on experience in lean manufacturing processes, IT systems infrastructure, and full-stack software troubleshooting, I approach engineering projects with a holistic mindset—ensuring that physical systems and the code running them operate in perfect alignment.
+                </p>
 
+                <div class="highlight-box">
+                    <h3>Core Technical Passions</h3>
+                    <p>🛠️ <strong>Hardware Assembly & Customization:</strong> High-performance computing configurations, electronics wiring, and physical debugging.</p>
+                    <p>🤖 <strong>Automation & Embedded Systems:</strong> Arduino, custom firmware scripting, and smart system integrations.</p>
+                    <p>📐 <strong>3D Fabrication:</strong> FDM 3D printing upgrades (Klipper firmware, hardware tuning) and mechanical CAD blueprinting.</p>
+                </div>
             </div>
         </section>
     </main>
 
 </body>
 </html>
-
-
