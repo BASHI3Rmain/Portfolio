@@ -406,7 +406,7 @@
 
 <script>
         let slideIndex = 0;
-
+        let slideTimer; // Variable to hold the auto-advance timer
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-item');
             const dots = document.querySelectorAll('.dot');
@@ -436,20 +436,29 @@
                 dots[slideIndex].classList.add('active');
             }
         }
-
+        // Starts or resets the automatic 2.5-second timer
+        function resetTimer() {
+            clearInterval(slideTimer); // Stop the old timer
+            slideTimer = setInterval(function() {
+                moveSlide(1); // Go to next slide
+            }, 2500); // 2500 milliseconds = 2.5 seconds
+        }
         // Button Controls
         function moveSlide(step) {
             showSlide(slideIndex + step);
+            resetTimer();
         }
 
         // Dot Controls
         function currentSlide(index) {
             showSlide(index);
+            resetTimer();
         }
 
         // Initialize carousel on load
         document.addEventListener("DOMContentLoaded", function() {
             showSlide(0);
+            resetTimer(); // Start autoplaying immediately
         });
     </script>
   
