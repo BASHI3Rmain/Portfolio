@@ -348,9 +348,10 @@
 
         <!-- Bottom Indicator Dots -->
         <div class="carousel-dots">
-            <span class="dot active" onclick="currentSlide(0)"></span>
+           <!-- <span class="dot active" onclick="currentSlide(0)"></span>
             <span class="dot" onclick="currentSlide(1)"></span>
             <span class="dot" onclick="currentSlide(2)"></span>
+        -->
         </div>
     </div>
 
@@ -395,34 +396,54 @@
 
 
     <script>
-        let slideIndex = 0;
-        const slides = document.querySelectorAll('.carousel-item');
-        const dots = document.querySelectorAll('.dot');
+       
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.carousel-item');
+    const dotsContainer = document.getElementById('carousel-dots-container');
 
-        function showSlide(index) {
-            // Cycle back to beginning if reaching end, or vice versa
-            if (index >= slides.length) { slideIndex = 0; }
-            if (index < 0) { slideIndex = slides.length - 1; }
+    // 1. Automatically generate dots based on slide count
+    function generateDots() {
+        dotsContainer.innerHTML = ''; // Clear container
+        slides.forEach((_, idx) => {
+            const dot = document.createElement('span');
+            dot.classList.add('dot');
+            if (idx === 0) dot.classList.add('active');
+            
+            // Link dot click to show its slide
+            dot.addEventListener('click', () => currentSlide(idx));
+            dotsContainer.appendChild(dot);
+        });
+    }
 
-            // Hide all slides and remove active class from dots
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
+    // Initialize the auto-generated dots
+    generateDots();
+    
+    // Fetch newly created dots
+    const dots = document.querySelectorAll('.dot');
 
-            // Show current slide and highlight current dot
-            slides[slideIndex].classList.add('active');
+    // 2. Standard slide controller
+    function showSlide(index) {
+        if (index >= slides.length) { slideIndex = 0; }
+        if (index < 0) { slideIndex = slides.length - 1; }
+
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        slides[slideIndex].classList.add('active');
+        if (dots[slideIndex]) {
             dots[slideIndex].classList.add('active');
         }
+    }
 
-        // Button Control (-1 for back, 1 for forward)
-        function moveSlide(step) {
-            showSlide(slideIndex += step);
-        }
+    function moveSlide(step) {
+        showSlide(slideIndex += step);
+    }
 
-        // Jump straight to specific slide via dot index
-        function currentSlide(index) {
-            showSlide(slideIndex = index);
-        }
-    </script>
+    function currentSlide(index) {
+        showSlide(slideIndex = index);
+    }
+</script>
+  
 
 
 </body>
