@@ -131,6 +131,104 @@
         li {
             margin-bottom: 8px;
         }
+        /* Carousel Container */
+.carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: 30px auto;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+}
+
+/* Hidden by default, smooth fade transition */
+.carousel-item {
+    display: none;
+    position: relative;
+    text-align: center;
+    animation: fade 0.5s ease-in-out;
+}
+
+.carousel-item.active {
+    display: block;
+}
+
+/* Enforce proportional image constraints */
+.carousel-item img {
+    width: 100%;
+    max-height: 450px;
+    object-fit: cover; /* Crops nicely without squishing the photo */
+    display: block;
+}
+
+/* Captions at the bottom */
+.carousel-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    padding: 12px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Navigation Buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(25px, 25px, 25px, 0.4);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+    user-select: none;
+    z-index: 10;
+}
+
+.carousel-btn:hover {
+    background: rgba(0, 86, 179, 0.8); /* Highlights in matching blue */
+}
+
+.prev-btn { left: 15px; }
+.next-btn { right: 15px; }
+
+/* Bottom Indicator Dots */
+.carousel-dots {
+    text-align: center;
+    position: absolute;
+    bottom: 50px; /* Sits right above the caption bar */
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.dot {
+    cursor: pointer;
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.2s;
+}
+
+.dot.active, .dot:hover {
+    background-color: #fff;
+}
+
+/* Fade Animation Keyframes */
+@keyframes fade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
     </style>
 </head>
 <body>
@@ -172,11 +270,48 @@
             
             <div class="project-card">
                 <div class="project-header">
-                    <h3>Gazebo Home Theatre</h3>
+                    <h3>Home Theatre</h3>
                     <span class="project-meta"><strong>Home</strong> | Summer 2026</span>
                 </div>
-                <p>Installed gazebo </p>
-            </p>
+                <p>Created a backyard home theatre with many self-designed and manufactured functionalities.</p>
+                <div class="carousel-container">
+    <div class="carousel-slide">
+        <div class="carousel-item active">
+            <img src="photo1.jpg" alt="Outside of Gazebo">
+            <div class="carousel-caption">Outside of gazebo home theatre.</div>
+        </div>
+        
+        <div class="carousel-item">
+            <img src="photo2.jpg" alt="Inside of Gazebo">
+            <div class="carousel-caption">Inside of gazebo home theatre.</div>
+        </div>
+        
+        <div class="carousel-item">
+            <img src="photo3.jpg" alt="Slideable Projector Mount">
+            <div class="carousel-caption">Self-designed and created moveable projector mount.</div>
+        </div>
+        <div class="carousel-item">
+            <img src="photo4.jpg" alt="Modded Entertainment">
+            <div class="carousel-caption">Modded WiiU system with karaoke.</div>
+        </div>
+    </div>
+
+    <button class="carousel-btn prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="carousel-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
+
+    <div class="carousel-dots">
+        <span class="dot active" onclick="currentSlide(0)"></span>
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+    </div>
+
+                <ul>
+                    <li>Installed gazebo with custom self designed moveable projector ceiling mount.</li>
+                    <li>Installed speaker system, karaoke, and entertainment systems.</li>
+                    <li>Modded gaming systems from scratch.</li>
+                </ul>
+                
+           
                 </div>
             </div>
 
@@ -207,6 +342,40 @@
 
         </section>
     </main>
+
+
+
+
+    <script>
+        let slideIndex = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            // Cycle back to beginning if reaching end, or vice versa
+            if (index >= slides.length) { slideIndex = 0; }
+            if (index < 0) { slideIndex = slides.length - 1; }
+
+            // Hide all slides and remove active class from dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Show current slide and highlight current dot
+            slides[slideIndex].classList.add('active');
+            dots[slideIndex].classList.add('active');
+        }
+
+        // Button Control (-1 for back, 1 for forward)
+        function moveSlide(step) {
+            showSlide(slideIndex += step);
+        }
+
+        // Jump straight to specific slide via dot index
+        function currentSlide(index) {
+            showSlide(slideIndex = index);
+        }
+    </script>
+
 
 </body>
 </html>
