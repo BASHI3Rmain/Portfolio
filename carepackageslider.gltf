@@ -1,0 +1,151 @@
+{
+	"asset": {
+		"generator": "SOLIDWORKSGLTF",
+		"version" : "2.0"
+	},
+"extensionsUsed": [ "KHR_lights_punctual", "Solidworks_custom_properties", "KHR_draco_mesh_compression"],
+"extensionsRequired": [ "KHR_draco_mesh_compression" ],
+	"scene" : 0,
+	"scenes": [
+		{
+			"name": "Default - <Default>_Display State 1",
+			"nodes": [
+				0, 1]
+		}
+	],
+	"nodes": [
+		{
+			"matrix": [
+				-0.492371,					0.0601064,					-0.868307,					0,
+				0.806958,					-0.342329,					-0.48128,					0,
+				-0.326175,					-0.937656,					0.12005,					0,
+				-0.23141,					-0.694447,					0.125687,					1
+			]
+			,"camera": 0
+			,"name": "current"		}
+,
+		{
+			"mesh": 0
+			,"name": "CarePackageSlider.SLDPRT"		}
+	],
+	"cameras": [
+		{
+			"type": "orthographic",
+			"orthographic" : {
+				"xmag": 1,
+				"ymag" : 1,
+				"zfar" : 100,
+				"znear" : 0.01
+			}
+		}
+	],
+	"meshes" : [
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 1,
+					"NORMAL" : 2,
+					"TEXCOORD_0" : 3
+					},
+					"indices" : 0,
+					"mode": 4,
+					"material" : 1
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 0,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		}
+	],
+	"accessors" : [
+			{
+				"componentType" : 5123
+				,"count" : 192
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+				,"min" : [-3.59999985e-02, -1.36190677e-11, -2.00000009e-03]
+				,"max" : [3.59999985e-02, 7.85000026e-02, 2.00000009e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC2"
+			}
+	],
+	"materials": [
+			{
+				"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.498039, 0.498039, 0.498039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			}
+	],
+	"textures": [
+			{
+				"sampler": 0,
+				"source": 0,
+				"name": "n_PlasticPolystyrene_normalmap.dds"
+			}
+	],
+	"images": [
+			{
+				"uri": "n_PlasticPolystyrene_normalmap.dds"
+			}
+	],
+	"samplers": [
+			{
+				"magFilter": 9729,
+				"minFilter" : 9729,
+				"wrapS" : 10497,
+				"wrapT" : 10497,
+				"name": "DefaultSampler"
+			}
+	],
+	"bufferViews" : [
+			{
+				"buffer": 0
+				,"byteOffset" : 0
+				,"byteLength" : 580
+			}
+	],
+	"buffers" : [
+			{
+				"byteLength": 580
+				,"uri" : "data.bin"
+			}
+	]
+}

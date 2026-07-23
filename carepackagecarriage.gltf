@@ -1,0 +1,116 @@
+{
+	"asset": {
+		"generator": "SOLIDWORKSGLTF",
+		"version" : "2.0"
+	},
+"extensionsUsed": [ "KHR_lights_punctual", "Solidworks_custom_properties", "KHR_draco_mesh_compression"],
+"extensionsRequired": [ "KHR_draco_mesh_compression" ],
+	"scene" : 0,
+	"scenes": [
+		{
+			"name": "Default - <Default>_Display State 1",
+			"nodes": [
+				0, 1]
+		}
+	],
+	"nodes": [
+		{
+			"matrix": [
+				0.884418,					0,					-0.466695,					0,
+				-0.240366,					0.857167,					-0.455509,					0,
+				0.400036,					0.515038,					0.758094,					0,
+				0.267629,					0.386279,					0.585667,					1
+			]
+			,"camera": 0
+			,"name": "current"		}
+,
+		{
+			"mesh": 0
+			,"name": "CarePackageCarriage.SLDPRT"		}
+	],
+	"cameras": [
+		{
+			"type": "orthographic",
+			"orthographic" : {
+				"xmag": 1,
+				"ymag" : 1,
+				"zfar" : 100,
+				"znear" : 0.01
+			}
+		}
+	],
+	"meshes" : [
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 1,
+					"NORMAL" : 2,
+					"TEXCOORD_0" : 3
+					},
+					"indices" : 0,
+					"mode": 4,
+					"material" : 0
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 0,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		}
+	],
+	"accessors" : [
+			{
+				"componentType" : 5123
+				,"count" : 5316
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 1645
+				,"type" : "VEC3"
+				,"min" : [-3.75000015e-02, -2.99999993e-02, -6.25000000e-02]
+				,"max" : [3.75000015e-02, 4.50000018e-02, 1.17549435e-38]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 1645
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 1645
+				,"type" : "VEC2"
+			}
+	],
+	"materials": [
+			{
+				"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.498039, 0.498039, 0.498039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			}
+	],
+	"bufferViews" : [
+			{
+				"buffer": 0
+				,"byteOffset" : 0
+				,"byteLength" : 8564
+			}
+	],
+	"buffers" : [
+			{
+				"byteLength": 8564
+				,"uri" : "data.bin"
+			}
+	]
+}

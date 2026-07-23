@@ -1,0 +1,449 @@
+{
+	"asset": {
+		"generator": "SOLIDWORKSGLTF",
+		"version" : "2.0"
+	},
+"extensionsUsed": [ "KHR_lights_punctual", "Solidworks_custom_properties", "KHR_draco_mesh_compression"],
+"extensionsRequired": [ "KHR_draco_mesh_compression" ],
+	"scene" : 0,
+	"scenes": [
+		{
+			"name": "Default - Display State-1",
+			"nodes": [
+				0, 1]
+		}
+	],
+	"nodes": [
+		{
+			"matrix": [
+				-0.737095,					0.504213,					-0.449957,					0,
+				-0.320316,					-0.84695,					-0.424352,					0,
+				-0.595054,					-0.168659,					0.785789,					0,
+				-0.490758,					0.0462695,					0.688037,					1
+			]
+			,"camera": 0
+			,"name": "current"		}
+,
+		{
+			"children": [
+				2, 3, 4, 5, 6
+			]
+			,"name": "CarePackageDroneAssembly"		}
+,
+		{
+			"matrix": [
+				0.622189,					0.0099878,					0.782803,					0,
+				-0.000737008,					-0.999911,					0.0133437,					0,
+				0.782867,					-0.00887921,					-0.622126,					0,
+				-0.0352135,					0.169201,					0.0266965,					1
+			]
+			,"mesh": 0
+			,"name": "CarePackage SCREW-1"		}
+,
+		{
+			"matrix": [
+				-0.992809,					-0.000865651,					-0.119703,					0,
+				-0.119704,					0.0133359,					0.99272,					0,
+				0.000737008,					0.999911,					-0.0133437,					0,
+				-0.0307058,					0.194229,					-0.0108711,					1
+			]
+			,"mesh": 1
+			,"name": "CarePackageSlider-1"		}
+,
+		{
+			"matrix": [
+				0.992809,					0.000865651,					0.119703,					0,
+				-0.119704,					0.0133359,					0.99272,					0,
+				-0.000737008,					-0.999911,					0.0133437,					0,
+				-0.03434,					0.136134,					0.0196911,					1
+			]
+			,"mesh": 2
+			,"name": "CarePackageDrone2-1"		}
+,
+		{
+			"matrix": [
+				0.710206,					0.00887048,					0.703938,					0,
+				0.000737008,					0.999911,					-0.0133437,					0,
+				-0.703993,					0.00999556,					0.710136,					0,
+				-0.0546105,					0.11873,					0.0250356,					1
+			]
+			,"mesh": 3
+			,"name": "CarePackageCirclePin-1"		}
+,
+		{
+			"matrix": [
+				0.520348,					-0.0117783,					-0.853873,					0,
+				0.000737008,					0.999911,					-0.0133437,					0,
+				0.853954,					0.00631404,					0.52031,					0,
+				-0.015891,					0.118732,					0.0297045,					1
+			]
+			,"mesh": 4
+			,"name": "CarePackageCirclePin-2"		}
+	],
+	"cameras": [
+		{
+			"type": "orthographic",
+			"orthographic" : {
+				"xmag": 1,
+				"ymag" : 1,
+				"zfar" : 100,
+				"znear" : 0.01
+			}
+		}
+	],
+	"meshes" : [
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 1,
+					"NORMAL" : 2,
+					"TEXCOORD_0" : 3
+					},
+					"indices" : 0,
+					"mode": 4,
+					"material" : 1
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 0,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		},
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 5,
+					"NORMAL" : 6,
+					"TEXCOORD_0" : 7
+					},
+					"indices" : 4,
+					"mode": 4,
+					"material" : 2
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 1,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		},
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 9,
+					"NORMAL" : 10,
+					"TEXCOORD_0" : 11
+					},
+					"indices" : 8,
+					"mode": 4,
+					"material" : 3
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 2,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		},
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 13,
+					"NORMAL" : 14,
+					"TEXCOORD_0" : 15
+					},
+					"indices" : 12,
+					"mode": 4,
+					"material" : 4
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 3,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		},
+		{
+			"primitives" : [
+				{
+					"attributes" : {
+					"POSITION" : 17,
+					"NORMAL" : 18,
+					"TEXCOORD_0" : 19
+					},
+					"indices" : 16,
+					"mode": 4,
+					"material" : 4
+					,"extensions": {
+					"KHR_draco_mesh_compression": {
+					"bufferView": 4,
+					"attributes" : {
+					"POSITION": 0,
+					"NORMAL" : 1,
+					"TEXCOORD_0" : 2
+					}
+					}
+					}
+				}
+			]
+		}
+	],
+	"accessors" : [
+			{
+				"componentType" : 5123
+				,"count" : 56130
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 17956
+				,"type" : "VEC3"
+				,"min" : [-8.49626679e-03, -4.99999989e-03, -8.48507136e-03]
+				,"max" : [8.49626679e-03, 2.19999999e-02, 8.50000046e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 17956
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 17956
+				,"type" : "VEC2"
+			},
+			{
+				"componentType" : 5123
+				,"count" : 192
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+				,"min" : [-3.59999985e-02, -1.36190677e-11, -2.00000009e-03]
+				,"max" : [3.59999985e-02, 7.85000026e-02, 2.00000009e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC2"
+			},
+			{
+				"componentType" : 5123
+				,"count" : 20394
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 6287
+				,"type" : "VEC3"
+				,"min" : [-3.75000015e-02, -2.99999993e-02, -6.25000000e-02]
+				,"max" : [3.75000015e-02, 4.50000018e-02, 1.75000001e-02]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 6287
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 6287
+				,"type" : "VEC2"
+			},
+			{
+				"componentType" : 5123
+				,"count" : 4086
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC3"
+				,"min" : [-1.84896693e-03, 0.00000000e+00, -1.85000000e-03]
+				,"max" : [1.84896693e-03, 3.99999991e-02, 1.85000000e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC2"
+			},
+			{
+				"componentType" : 5123
+				,"count" : 4086
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC3"
+				,"min" : [-1.84896693e-03, 0.00000000e+00, -1.85000000e-03]
+				,"max" : [1.84896693e-03, 3.99999991e-02, 1.85000000e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 939
+				,"type" : "VEC2"
+			}
+	],
+	"materials": [
+			{
+				"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.498039, 0.498039, 0.498039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050-3"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050-1"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050-2"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			}
+	],
+	"textures": [
+			{
+				"sampler": 0,
+				"source": 0,
+				"name": "n_PlasticPolystyrene_normalmap.dds"
+			}
+	],
+	"images": [
+			{
+				"uri": "n_PlasticPolystyrene_normalmap.dds"
+			}
+	],
+	"samplers": [
+			{
+				"magFilter": 9729,
+				"minFilter" : 9729,
+				"wrapS" : 10497,
+				"wrapT" : 10497,
+				"name": "DefaultSampler"
+			}
+	],
+	"bufferViews" : [
+			{
+				"buffer": 0
+				,"byteOffset" : 0
+				,"byteLength" : 74884
+			},
+			{
+				"buffer": 0
+				,"byteOffset" : 74884
+				,"byteLength" : 580
+			},
+			{
+				"buffer": 0
+				,"byteOffset" : 75464
+				,"byteLength" : 30092
+			},
+			{
+				"buffer": 0
+				,"byteOffset" : 105556
+				,"byteLength" : 4748
+			},
+			{
+				"buffer": 0
+				,"byteOffset" : 110304
+				,"byteLength" : 4748
+			}
+	],
+	"buffers" : [
+			{
+				"byteLength": 115052
+				,"uri" : "data.bin"
+			}
+	]
+}

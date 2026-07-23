@@ -314,19 +314,25 @@ const KITS = [
     ]
   },
   {
-    id: 'robotics-chassis', name: 'Robotics Chassis', meta: 'FIRST Robotics Team', color: '#4d9fff',
+    id: 'carepackagedroneassembly', name: 'Care Package Drone Addon!', meta: 'DroneProj', color: '#4d9fff',
     parts: [
-      { id:'chassis-frame', name:'Frame', small:false,
+      { id:'carepackage_screw', name:'Screw', small:false,
         local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.15,0.6), metal(0x4d9fff)); return m; },
         assembled: { pos:[0,0,0], rot:[0,0,0] } },
-      { id:'chassis-wheels', name:'Wheel Set', small:false,
+      { id:'carepackagebot', name:'Top Half Drone Encasing', small:false,
         local: () => { const g = new THREE.Group(); const wg = new THREE.CylinderGeometry(0.18,0.18,0.12,20);
           [[-0.4,-0.28],[0.4,-0.28],[-0.4,0.28],[0.4,0.28]].forEach(([x,z]) => { const w = new THREE.Mesh(wg, plastic(0x222222)); w.rotation.z = Math.PI/2; w.position.set(x,0,z); g.add(w); }); return g; },
         assembled: { pos:[0,-0.05,0], rot:[0,0,0] } },
-      { id:'chassis-arm', name:'Control Arm', small:true,
+      { id:'carepackagetop', name:'Bottom Half Drone Encasing', small:false,
         local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.1,0.5,0.1), metal(0x88aaff)); return m; },
         assembled: { pos:[0,0.4,0], rot:[0,0,0] } },
-      { id:'chassis-screws', name:'Fastener Set', small:true,
+      { id:'carepackagecarriage', name:'Drone Carriage', small:false,
+        local: buildFastenerSet,
+        assembled: { pos:[0.3,0.1,0.2], rot:[0,0,0] } }, 
+        {id:'carepackagecirclepin', name:'Drone Encasing Pin', small:false,
+        local: buildFastenerSet,
+        assembled: { pos:[0.3,0.1,0.2], rot:[0,0,0] } },
+        {id:'carepackageslider', name:'Drone Carriage Cover', small:false,
         local: buildFastenerSet,
         assembled: { pos:[0.3,0.1,0.2], rot:[0,0,0] } },
     ]
