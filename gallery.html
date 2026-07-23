@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bashar Shaaban | 3D Project Gallery</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0b0c10;
+    color: #eee;
+  }
+  #canvas-wrap { position: fixed; inset: 0; }
+  canvas { display: block; }
+
+  /* ---- Top bar, matches the rest of the site ---- */
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(15,16,20,0.75);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  #topbar .brand { font-weight: bold; color: #fff; font-size: 1.05rem; }
+  #topbar .brand span { color: #4d9fff; }
+  #topbar a.exit {
+    text-decoration: none; color: #ddd; font-weight: bold; font-size: 0.9rem;
+    padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
+    transition: all .15s ease;
+  }
+  #topbar a.exit:hover { background: #0056b3; border-color: #0056b3; }
+
+  /* ---- Crosshair + pickup prompt ---- */
+  #crosshair {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 0 4px rgba(0,0,0,0.6);
+    z-index: 15; pointer-events: none;
+  }
+  #prompt {
+    position: fixed; top: 58%; left: 50%; transform: translate(-50%, 0);
+    background: rgba(0,0,0,0.7); color: #fff; padding: 8px 16px;
+    border-radius: 20px; font-size: 0.95rem; z-index: 15;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: none; pointer-events: none; text-align: center;
+  }
+  #prompt strong { color: #4d9fff; }
+  #prompt .sub { display:block; font-size: 0.75rem; color: #999; margin-top: 2px; }
+
+  /* ---- Instructions splash ---- */
+  #splash {
+    position: fixed; inset: 0; z-index: 30;
+    background: radial-gradient(circle at center, #1a1c22 0%, #08090b 100%);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    flex-direction: column; padding: 20px;
+  }
+  #splash h1 { font-size: 2rem; margin-bottom: 6px; color: #fff; }
+  #splash p.sub { color: #9aa; margin-top: 0; margin-bottom: 26px; max-width: 560px; }
+  #splash .controls {
+    display: grid; grid-template-columns: repeat(2, minmax(160px,1fr));
+    gap: 10px 30px; margin-bottom: 30px; text-align: left;
+  }
+  #splash .controls div { font-size: 0.95rem; color: #ccc; }
+  #splash .controls b { color: #4d9fff; display: inline-block; min-width: 74px; }
+  #splash button {
+    background: #0056b3; color: #fff; border: none; padding: 14px 34px;
+    font-size: 1.05rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  #splash button:hover { background: #004085; }
+  #splash .note { margin-top: 18px; font-size: 0.8rem; color: #777; max-width: 480px; }
+
+  /* ---- Inventory bar ---- */
+  #inventory {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+    background: rgba(15,16,20,0.85); backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+    overflow-x: auto;
+  }
+  #inventory .label { font-size: 0.8rem; color: #888; white-space: nowrap; margin-right: 4px; }
+  .slot {
+    background: #1c1e24; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+    padding: 8px 10px; min-width: 160px; flex-shrink: 0;
+  }
+  .slot.complete { border-color: #d97706; box-shadow: 0 0 0 1px rgba(217,119,6,0.4) inset; }
+  .slot .swatch { width: 100%; height: 30px; border-radius: 4px; margin-bottom: 6px; }
+  .slot .name { font-size: 0.8rem; font-weight: bold; color: #fff; margin-bottom: 2px; }
+  .slot .progress { font-size: 0.7rem; color: #d97706; margin-bottom: 6px; }
+  .slot .progress.done { color: #4dff88; }
+  .slot .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .slot button {
+    background: #2a2d35; color: #ddd; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 5px; padding: 4px 7px; font-size: 0.72rem; cursor: pointer;
+  }
+  .slot button:hover { background: #0056b3; color: #fff; }
+  .slot .combine-check { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #aaa; }
+  #combine-btn {
+    background: #d97706; color: #fff; border: none; border-radius: 6px;
+    padding: 8px 14px; font-weight: bold; font-size: 0.82rem; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #combine-btn:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
+  #empty-inv { font-size: 0.82rem; color: #666; font-style: italic; }
+  #combine-msg {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.85); color: #ff8080; padding: 8px 16px; border-radius: 6px;
+    font-size: 0.85rem; z-index: 25; display: none;
+  }
+
+  /* ---- Inspect overlay ---- */
+  #inspect {
+    position: fixed; inset: 0; z-index: 40; display: none;
+    background: rgba(6,7,9,0.92);
+    align-items: center; justify-content: center;
+  }
+  #inspect-canvas-wrap { width: 70vw; height: 70vh; max-width: 900px; }
+  #inspect-panel {
+    position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+    text-align: center;
+  }
+  #inspect-panel h3 { margin: 0 0 4px 0; color: #fff; }
+  #inspect-panel p { margin: 0; color: #888; font-size: 0.85rem; }
+  #inspect-close {
+    position: absolute; top: 24px; right: 30px;
+    background: rgba(255,255,255,0.1); color: #fff; border: none;
+    width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+  }
+  #inspect-hint {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    color: #666; font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <h1>🖼️ The Fabrication Gallery</h1>
+  <p class="sub">Each project is laid out as a kit of real parts — frame, arm, hook, fastener set and so on. Pick up individual pieces and snap them together in your inventory to build the full assembly.</p>
+  <div class="controls">
+    <div><b>WASD</b> Move</div>
+    <div><b>Mouse</b> Look around</div>
+    <div><b>Shift</b> Walk faster</div>
+    <div><b>E</b> Pick up / take piece</div>
+    <div><b>Esc</b> Release mouse</div>
+    <div><b>Click item</b> Inspect / Combine / Download</div>
+  </div>
+  <button id="start-btn">Enter Gallery</button>
+  <p class="note">Note: every piece here is a stand-in shape built for this demo. Swap in real SolidWorks-exported geometry per part once it's ready (see models-README.md) — the pickup, snapping, and download system already works with whatever mesh is loaded.</p>
+</div>
+
+<div id="topbar">
+  <div class="brand">Bashar Shaaban <span>| 3D Gallery</span></div>
+  <a class="exit" href="projects.html">← Exit to Projects</a>
+</div>
+
+<div id="canvas-wrap"></div>
+<div id="crosshair"></div>
+<div id="prompt"></div>
+<div id="combine-msg"></div>
+
+<div id="inventory">
+  <span class="label">INVENTORY</span>
+  <span id="empty-inv">Nothing picked up yet — walk up to a piece and press E.</span>
+  <div id="slots" style="display:flex; gap:12px;"></div>
+  <button id="combine-btn" disabled>Combine Selected (0)</button>
+</div>
+
+<div id="inspect">
+  <button id="inspect-close">✕</button>
+  <div id="inspect-panel"><h3 id="inspect-title"></h3><p id="inspect-sub">Drag to rotate · scroll to zoom</p></div>
+  <div id="inspect-canvas-wrap"></div>
+  <div id="inspect-hint">This is the exact piece(s) you're holding — download the model below once you're happy with the view.</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+/* =========================================================
+   SCENE SETUP
+   ========================================================= */
+const canvasWrap = document.getElementById('canvas-wrap');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0c10);
+scene.fog = new THREE.Fog(0x0b0c10, 8, 30);
+
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.7, 9);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+canvasWrap.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+scene.add(new THREE.AmbientLight(0x404050, 0.9));
+scene.add(new THREE.HemisphereLight(0x556677, 0x111114, 0.6));
+
+/* =========================================================
+   ROOM
+   ========================================================= */
+const ROOM_W = 24, ROOM_D = 18, ROOM_H = 5;
+
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x1b1c20, roughness: 0.85, metalness: 0.1 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x232530, roughness: 0.95 });
+function makeWall(w, h, x, y, z, ry) {
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(w, h), wallMat);
+  wall.position.set(x, y, z);
+  wall.rotation.y = ry;
+  scene.add(wall);
+}
+makeWall(ROOM_W, ROOM_H, 0, ROOM_H/2, -ROOM_D/2, 0);
+makeWall(ROOM_W, ROOM_H, 0, ROOM_H/2, ROOM_D/2, Math.PI);
+makeWall(ROOM_D, ROOM_H, -ROOM_W/2, ROOM_H/2, 0, Math.PI/2);
+makeWall(ROOM_D, ROOM_H, ROOM_W/2, ROOM_H/2, 0, -Math.PI/2);
+
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), new THREE.MeshStandardMaterial({ color: 0x14151a }));
+ceiling.position.y = ROOM_H;
+ceiling.rotation.x = Math.PI/2;
+scene.add(ceiling);
+
+const stringGeo = new THREE.SphereGeometry(0.035, 8, 8);
+const stringMat = new THREE.MeshBasicMaterial({ color: 0xffc978 });
+for (let i = -ROOM_W/2 + 1; i <= ROOM_W/2 - 1; i += 0.9) {
+  const bulb = new THREE.Mesh(stringGeo, stringMat);
+  bulb.position.set(i, 4.6, -ROOM_D/2 + 0.05);
+  scene.add(bulb);
+}
+
+/* =========================================================
+   MATERIAL HELPERS
+   ========================================================= */
+function metal(color) { return new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.7 }); }
+function plastic(color) { return new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1 }); }
+function fastener(color=0xaaaaaa) { return new THREE.MeshStandardMaterial({ color, roughness: 0.3, metalness: 0.9 }); }
+
+/* Small reusable fastener-set piece (a few screws + a hex key), used
+   across every kit as the "small connecting hardware" part. */
+function buildFastenerSet() {
+  const g = new THREE.Group();
+  const screwGeo = new THREE.CylinderGeometry(0.02,0.02,0.09,10);
+  const headGeo = new THREE.CylinderGeometry(0.032,0.032,0.02,10);
+  [[-0.05,0],[0.05,0],[0,0.07]].forEach(([x,z]) => {
+    const shaft = new THREE.Mesh(screwGeo, fastener());
+    shaft.position.set(x,0.045,z); g.add(shaft);
+    const head = new THREE.Mesh(headGeo, fastener(0x888888));
+    head.position.set(x,0.09,z); g.add(head);
+  });
+  return g;
+}
+
+/* A single screw — for kits that just need one fastener rather than
+   a whole set (e.g. Drone CarePackage below). */
+function buildSingleScrew() {
+  const g = new THREE.Group();
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.09,10), fastener());
+  shaft.position.y = 0.045; g.add(shaft);
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.032,0.02,10), fastener(0x888888));
+  head.position.y = 0.09; g.add(head);
+  return g;
+}
+
+/* =========================================================
+   KITS — each project is a set of individually-pickable parts.
+   `local` builds the part's own geometry at its own origin.
+   `assembled` is where that part sits (position/rotation) once
+   it's snapped into the shared kit coordinate frame — combining
+   two held parts just re-renders every part currently held from
+   these canonical transforms, so snapping never drifts no matter
+   what order pieces are picked up or combined in.
+   ========================================================= */
+const KITS = [
+  {
+    id: 'projector-mount', name: 'Ceiling Projector Mount', meta: 'Home Theatre Build', color: '#999999',
+    parts: [
+      { id:'mount-plate', name:'Ceiling Plate', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.05,0.35), metal(0x999999)); return m; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'mount-arm', name:'Drop Arm', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.5,0.06), metal(0x777777)); return m; },
+        assembled: { pos:[0,-0.27,0], rot:[0,0,0] } },
+      { id:'mount-hook', name:'Swivel Hook', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.TorusGeometry(0.08,0.02,10,20), metal(0x555555)); m.rotation.x = Math.PI/2; return m; },
+        assembled: { pos:[0,-0.55,0], rot:[0,0,0] } },
+      { id:'mount-screws', name:'Fastener Set', small:true,
+        local: buildFastenerSet,
+        assembled: { pos:[0.18,0.03,0.1], rot:[0,0,0] } },
+    ]
+  },
+  {
+    id: 'robotics-chassis', name: 'Robotics Chassis', meta: 'FIRST Robotics Team', color: '#4d9fff',
+    parts: [
+      { id:'chassis-frame', name:'Frame', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.15,0.6), metal(0x4d9fff)); return m; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'chassis-wheels', name:'Wheel Set', small:false,
+        local: () => { const g = new THREE.Group(); const wg = new THREE.CylinderGeometry(0.18,0.18,0.12,20);
+          [[-0.4,-0.28],[0.4,-0.28],[-0.4,0.28],[0.4,0.28]].forEach(([x,z]) => { const w = new THREE.Mesh(wg, plastic(0x222222)); w.rotation.z = Math.PI/2; w.position.set(x,0,z); g.add(w); }); return g; },
+        assembled: { pos:[0,-0.05,0], rot:[0,0,0] } },
+      { id:'chassis-arm', name:'Control Arm', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.1,0.5,0.1), metal(0x88aaff)); return m; },
+        assembled: { pos:[0,0.4,0], rot:[0,0,0] } },
+      { id:'chassis-screws', name:'Fastener Set', small:true,
+        local: buildFastenerSet,
+        assembled: { pos:[0.3,0.1,0.2], rot:[0,0,0] } },
+    ]
+  },
+  {
+    id: 'projector-casing', name: 'Projector Casing', meta: 'Home Theatre Build', color: '#2b2d33',
+    parts: [
+      { id:'casing-shell', name:'Outer Shell', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.6,0.28,0.42), plastic(0x2b2d33)); return m; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'casing-lens', name:'Lens Ring', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.08,24), metal(0x111111)); m.rotation.x = Math.PI/2; return m; },
+        assembled: { pos:[0,0.02,0.23], rot:[Math.PI/2,0,0] } },
+      { id:'casing-vent', name:'Vent Grille', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.2,0.02,0.15), plastic(0x111111)); return m; },
+        assembled: { pos:[-0.1,0.15,-0.1], rot:[0,0,0] } },
+      { id:'casing-screws', name:'Fastener Set', small:true,
+        local: buildFastenerSet,
+        assembled: { pos:[0.22,0.15,-0.15], rot:[0,0,0] } },
+    ]
+  },
+  {
+    id: 'autonomous-cart', name: 'Autonomous Mobile Device', meta: 'U of Guelph Design Team', color: '#d97706',
+    parts: [
+      { id:'cart-body', name:'Body', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.8,0.25,0.5), plastic(0xd97706)); return m; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'cart-wheels', name:'Wheel Set', small:false,
+        local: () => { const g = new THREE.Group(); const wg = new THREE.CylinderGeometry(0.16,0.16,0.1,20);
+          [[-0.32,-0.22],[0.32,-0.22],[-0.32,0.22],[0.32,0.22]].forEach(([x,z]) => { const w = new THREE.Mesh(wg, plastic(0x111111)); w.rotation.z = Math.PI/2; w.position.set(x,-0.09,z); g.add(w); }); return g; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'cart-launcher', name:'Launcher', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,0.4,16), metal(0x999999)); m.rotation.x = Math.PI/4; return m; },
+        assembled: { pos:[0,0.25,0], rot:[Math.PI/4,0,0] } },
+      { id:'cart-screws', name:'Fastener Set', small:true,
+        local: buildFastenerSet,
+        assembled: { pos:[0.3,0.13,0.2], rot:[0,0,0] } },
+    ]
+  },
+  {
+    id: 'laser-device', name: 'Mobile Laser Point Device', meta: 'Personal Project', color: '#ff4d4d',
+    parts: [
+      { id:'laser-base', name:'Base', small:false,
+        local: () => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.26,0.15,24), plastic(0x333333)); return m; },
+        assembled: { pos:[0,0,0], rot:[0,0,0] } },
+      { id:'laser-arm', name:'Joystick Arm', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.35,12), metal(0x888888)); return m; },
+        assembled: { pos:[0.12,0.225,0], rot:[0,0,Math.PI/8] } },
+      { id:'laser-turret', name:'Turret', small:true,
+        local: () => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.14,20,20), metal(0xff4d4d)); return m; },
+        assembled: { pos:[0,0.145,0], rot:[0,0,0] } },
+      { id:'laser-screws', name:'Fastener Set', small:true,
+        local: buildFastenerSet,
+        assembled: { pos:[0.2,0.03,0.1], rot:[0,0,0] } },
+    ]
+  },
+];
+
+/* =========================================================
+   BUILD STATIONS — one per kit. The largest part sits on the
+   main pedestal; the rest are laid out on shorter stub stands
+   around it, like parts trays next to a workbench.
+   ========================================================= */
+const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x2e3138, roughness: 0.6 });
+const pickables = []; // { object, kit, part, worldPos, taken }
+
+function makePlaque(text1, text2, x, y, z, faceZ) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#111'; ctx.fillRect(0,0,256,64);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Segoe UI'; ctx.fillText(text1, 10, 26);
+  ctx.fillStyle = '#4d9fff'; ctx.font = '14px Segoe UI'; ctx.fillText(text2, 10, 48);
+  const tex = new THREE.CanvasTexture(canvas);
+  const plaque = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.17), new THREE.MeshBasicMaterial({ map: tex }));
+  plaque.position.set(x, y, z);
+  plaque.rotation.y = faceZ >= 0 ? 0 : Math.PI;
+  scene.add(plaque);
+}
+
+KITS.forEach((kit, i) => {
+  const angle = (i / KITS.length) * Math.PI * 2;
+  const radius = 6.5;
+  const cx = Math.sin(angle) * radius;
+  const cz = Math.cos(angle) * radius * 0.85 - 1;
+  const faceZ = cz >= 0 ? 1 : -1;
+
+  // main pedestal for the largest part (index 0)
+  const mainPed = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 24), pedestalMat);
+  mainPed.position.set(cx, 0.45, cz);
+  mainPed.castShadow = true; mainPed.receiveShadow = true;
+  scene.add(mainPed);
+  makePlaque(kit.name, kit.meta, cx, 0.05, cz + faceZ*0.56, faceZ);
+
+  const spot = new THREE.SpotLight(0xfff2dd, 30, 9, Math.PI/5, 0.5, 1.5);
+  spot.position.set(cx, ROOM_H - 0.2, cz);
+  spot.target.position.set(cx, 0.6, cz);
+  scene.add(spot); scene.add(spot.target);
+
+  // stub stands for the remaining parts, arranged in a small arc in front
+  const stubPositions = [
+    [cx - 1.0, cz + faceZ*1.3],
+    [cx,        cz + faceZ*1.6],
+    [cx + 1.0, cz + faceZ*1.3],
+  ];
+
+  kit.parts.forEach((part, j) => {
+    let worldX, worldY, worldZ, standHeight;
+    if (j === 0) {
+      worldX = cx; worldZ = cz; standHeight = 0.9;
+    } else {
+      const [sx, sz] = stubPositions[j-1];
+      worldX = sx; worldZ = sz; standHeight = 0.45;
+      const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.25, standHeight, 16), pedestalMat);
+      stub.position.set(sx, standHeight/2, sz);
+      stub.castShadow = true; stub.receiveShadow = true;
+      scene.add(stub);
+      makePlaque(part.name, kit.name, sx, standHeight - 0.35, sz + faceZ*0.32, faceZ);
+    }
+    worldY = standHeight + 0.15;
+
+    const mesh = part.local();
+    mesh.position.set(worldX, worldY, worldZ);
+    mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+    scene.add(mesh);
+
+    pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
+  });
+});
+
+/* =========================================================
+   FIRST PERSON CONTROLS
+   ========================================================= */
+const controls = new PointerLockControls(camera, renderer.domElement);
+const splash = document.getElementById('splash');
+document.getElementById('start-btn').addEventListener('click', () => controls.lock());
+controls.addEventListener('lock', () => splash.style.display = 'none');
+controls.addEventListener('unlock', () => { if (!inspectOpen) splash.style.display = 'flex'; });
+
+const move = { f:false, b:false, l:false, r:false, sprint:false };
+document.addEventListener('keydown', e => {
+  if (e.code === 'KeyW') move.f = true;
+  if (e.code === 'KeyS') move.b = true;
+  if (e.code === 'KeyA') move.l = true;
+  if (e.code === 'KeyD') move.r = true;
+  if (e.code === 'ShiftLeft') move.sprint = true;
+  if (e.code === 'KeyE') tryPickup();
+});
+document.addEventListener('keyup', e => {
+  if (e.code === 'KeyW') move.f = false;
+  if (e.code === 'KeyS') move.b = false;
+  if (e.code === 'KeyA') move.l = false;
+  if (e.code === 'KeyD') move.r = false;
+  if (e.code === 'ShiftLeft') move.sprint = false;
+});
+
+const velocity = new THREE.Vector3();
+const clock = new THREE.Clock();
+
+/* =========================================================
+   RAYCAST PICKUP PROMPT
+   ========================================================= */
+const raycaster = new THREE.Raycaster();
+const promptEl = document.getElementById('prompt');
+let hovered = null;
+
+function tryPickup() {
+  if (!hovered || inventory.length >= 10) return;
+  addToInventory(hovered.kit, hovered.part);
+  scene.remove(hovered.mesh);
+  hovered.taken = true;
+  hovered = null;
+  promptEl.style.display = 'none';
+}
+
+/* =========================================================
+   INVENTORY  — items now carry a set of partIds within a kit.
+   Picking a single piece up creates a 1-part item; combining
+   two items of the same kit merges their partId sets and
+   re-renders every included part at its canonical `assembled`
+   transform, so the result always snaps together correctly.
+   ========================================================= */
+let inventory = []; // { uid, kitId, kitName, color, partIds:Set, selected }
+const slotsEl = document.getElementById('slots');
+const emptyEl = document.getElementById('empty-inv');
+const combineBtn = document.getElementById('combine-btn');
+const combineMsg = document.getElementById('combine-msg');
+let uid = 0;
+
+function buildKitObject(kit, partIds) {
+  const g = new THREE.Group();
+  kit.parts.filter(p => partIds.has(p.id)).forEach(p => {
+    const mesh = p.local();
+    mesh.position.set(...p.assembled.pos);
+    mesh.rotation.set(...p.assembled.rot);
+    g.add(mesh);
+  });
+  return g;
+}
+
+function addToInventory(kit, part) {
+  inventory.push({ uid: uid++, kitId: kit.id, kitName: kit.name, color: kit.color, partIds: new Set([part.id]), selected: false });
+  renderInventory();
+}
+
+function itemLabel(item) {
+  const kit = KITS.find(k => k.id === item.kitId);
+  const total = kit.parts.length;
+  const held = item.partIds.size;
+  if (held === 1) {
+    const part = kit.parts.find(p => item.partIds.has(p.id));
+    return { name: part.name, sub: `${kit.name} · piece ${1}/${total}`, done: false };
+  }
+  const done = held === total;
+  return { name: done ? `${kit.name} (complete)` : `${kit.name} (partial)`, sub: `${held}/${total} pieces`, done };
+}
+
+function renderInventory() {
+  slotsEl.innerHTML = '';
+  emptyEl.style.display = inventory.length ? 'none' : 'inline';
+  inventory.forEach(item => {
+    const info = itemLabel(item);
+    const slot = document.createElement('div');
+    slot.className = 'slot' + (info.done ? ' complete' : '');
+    slot.innerHTML = `
+      <div class="swatch" style="background:${item.color}"></div>
+      <div class="name">${info.done ? '✅ ' : ''}${info.name}</div>
+      <div class="progress ${info.done ? 'done' : ''}">${info.sub}</div>
+      <div class="row"><label class="combine-check"><input type="checkbox" data-uid="${item.uid}" class="combine-cb"> combine</label></div>
+      <div class="row" style="margin-top:6px;">
+        <button data-action="inspect" data-uid="${item.uid}">Inspect</button>
+        <button data-action="download" data-uid="${item.uid}">Download .glb</button>
+        <button data-action="drop" data-uid="${item.uid}">Drop</button>
+      </div>`;
+    slotsEl.appendChild(slot);
+  });
+  updateCombineBtn();
+}
+
+slotsEl.addEventListener('click', e => {
+  const action = e.target.dataset.action;
+  const uidVal = Number(e.target.dataset.uid);
+  if (!action) return;
+  const item = inventory.find(i => i.uid === uidVal);
+  if (!item) return;
+  if (action === 'inspect') openInspect(item);
+  if (action === 'download') downloadItem(item);
+  if (action === 'drop') dropItem(item);
+});
+slotsEl.addEventListener('change', e => {
+  if (!e.target.classList.contains('combine-cb')) return;
+  const item = inventory.find(i => i.uid === Number(e.target.dataset.uid));
+  if (item) item.selected = e.target.checked;
+  updateCombineBtn();
+});
+
+function updateCombineBtn() {
+  const n = inventory.filter(i => i.selected).length;
+  combineBtn.textContent = `Combine Selected (${n})`;
+  combineBtn.disabled = n !== 2;
+}
+
+function showCombineMsg(text) {
+  combineMsg.textContent = text;
+  combineMsg.style.display = 'block';
+  clearTimeout(showCombineMsg._t);
+  showCombineMsg._t = setTimeout(() => combineMsg.style.display = 'none', 2600);
+}
+
+combineBtn.addEventListener('click', () => {
+  const chosen = inventory.filter(i => i.selected);
+  if (chosen.length !== 2) return;
+  const [a, b] = chosen;
+
+  if (a.kitId !== b.kitId) {
+    showCombineMsg(`These pieces are from different projects — ${a.kitName} and ${b.kitName} don't fit together.`);
+    return;
+  }
+  const overlap = [...a.partIds].some(id => b.partIds.has(id));
+  if (overlap) { showCombineMsg('You already have both of those pieces together.'); return; }
+
+  const mergedIds = new Set([...a.partIds, ...b.partIds]);
+  inventory = inventory.filter(i => !i.selected);
+  inventory.push({ uid: uid++, kitId: a.kitId, kitName: a.kitName, color: a.color, partIds: mergedIds, selected: false });
+  renderInventory();
+
+  const kit = KITS.find(k => k.id === a.kitId);
+  if (mergedIds.size === kit.parts.length) showCombineMsg(`${kit.name} fully assembled! ✅`);
+});
+
+function dropItem(item) {
+  inventory = inventory.filter(i => i.uid !== item.uid);
+  const kit = KITS.find(k => k.id === item.kitId);
+  item.partIds.forEach(partId => {
+    const slotInfo = pickables.find(p => p.kit.id === kit.id && p.part.id === partId && p.taken);
+    if (!slotInfo) return;
+    const restored = slotInfo.part.local();
+    restored.position.set(slotInfo.worldX, slotInfo.worldY, slotInfo.worldZ);
+    restored.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+    scene.add(restored);
+    slotInfo.mesh = restored;
+    slotInfo.taken = false;
+  });
+  renderInventory();
+}
+
+function downloadItem(item) {
+  const kit = KITS.find(k => k.id === item.kitId);
+  const obj = buildKitObject(kit, item.partIds);
+  const exporter = new GLTFExporter();
+  const info = itemLabel(item);
+  exporter.parse(obj, (result) => {
+    let blob, filename;
+    if (result instanceof ArrayBuffer) {
+      blob = new Blob([result], { type: 'application/octet-stream' });
+      filename = `${slugify(kit.name + '-' + info.sub)}.glb`;
+    } else {
+      blob = new Blob([JSON.stringify(result)], { type: 'application/json' });
+      filename = `${slugify(kit.name)}.gltf`;
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+  }, (err) => console.error('Export failed', err), { binary: true });
+}
+function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+/* =========================================================
+   INSPECT MODE
+   ========================================================= */
+let inspectOpen = false;
+const inspectEl = document.getElementById('inspect');
+const inspectCanvasWrap = document.getElementById('inspect-canvas-wrap');
+const inspectTitle = document.getElementById('inspect-title');
+
+const inspectScene = new THREE.Scene();
+inspectScene.background = new THREE.Color(0x08090b);
+const inspectCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 50);
+inspectCamera.position.set(1.4, 1.1, 1.6);
+const inspectRenderer = new THREE.WebGLRenderer({ antialias: true });
+inspectRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+inspectCanvasWrap.appendChild(inspectRenderer.domElement);
+inspectScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+const inspectKeyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+inspectKeyLight.position.set(3,4,3);
+inspectScene.add(inspectKeyLight);
+const orbit = new OrbitControls(inspectCamera, inspectRenderer.domElement);
+orbit.enableDamping = true;
+
+let currentInspectObj = null;
+function openInspect(item) {
+  if (currentInspectObj) inspectScene.remove(currentInspectObj);
+  const kit = KITS.find(k => k.id === item.kitId);
+  currentInspectObj = buildKitObject(kit, item.partIds);
+  const box = new THREE.Box3().setFromObject(currentInspectObj);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3()).length() || 1;
+  currentInspectObj.position.sub(center);
+  const scale = 1.6 / size;
+  currentInspectObj.scale.setScalar(scale);
+  inspectScene.add(currentInspectObj);
+
+  const info = itemLabel(item);
+  inspectTitle.textContent = info.name;
+  inspectEl.style.display = 'flex';
+  inspectOpen = true;
+  controls.unlock();
+  resizeInspect();
+}
+function resizeInspect() {
+  const w = inspectCanvasWrap.clientWidth, h = inspectCanvasWrap.clientHeight;
+  inspectCamera.aspect = w/h; inspectCamera.updateProjectionMatrix();
+  inspectRenderer.setSize(w, h);
+}
+document.getElementById('inspect-close').addEventListener('click', () => {
+  inspectEl.style.display = 'none';
+  inspectOpen = false;
+  splash.style.display = 'flex';
+});
+window.addEventListener('resize', resizeInspect);
+
+function inspectLoop() {
+  requestAnimationFrame(inspectLoop);
+  if (inspectOpen) {
+    orbit.update();
+    inspectRenderer.render(inspectScene, inspectCamera);
+  }
+}
+inspectLoop();
+
+/* =========================================================
+   MAIN LOOP
+   ========================================================= */
+function updateHoverPrompt() {
+  raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+  const targets = pickables.filter(p => !p.taken).map(p => p.mesh);
+  const hits = raycaster.intersectObjects(targets, true);
+  if (hits.length && hits[0].distance < 3.2) {
+    const hitRoot = pickables.find(p => p.mesh === hits[0].object || p.mesh.getObjectById(hits[0].object.id));
+    hovered = hitRoot || null;
+    if (hovered) {
+      promptEl.innerHTML = `Press <strong>E</strong> to pick up ${hovered.part.name}<span class="sub">${hovered.kit.name}</span>`;
+      promptEl.style.display = 'block';
+    }
+  } else {
+    hovered = null;
+    promptEl.style.display = 'none';
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  if (controls.isLocked && !inspectOpen) {
+    const speed = move.sprint ? 6.5 : 3.6;
+    velocity.x -= velocity.x * 8 * dt;
+    velocity.z -= velocity.z * 8 * dt;
+    const dir = new THREE.Vector3(Number(move.r)-Number(move.l), 0, Number(move.b)-Number(move.f)).normalize();
+    if (move.f||move.b) velocity.z -= dir.z * speed * dt * 10;
+    if (move.l||move.r) velocity.x -= dir.x * speed * dt * 10;
+
+    controls.moveRight(-velocity.x * dt);
+    controls.moveForward(-velocity.z * dt);
+
+    const p = controls.getObject().position;
+    p.x = Math.max(-ROOM_W/2+0.6, Math.min(ROOM_W/2-0.6, p.x));
+    p.z = Math.max(-ROOM_D/2+0.6, Math.min(ROOM_D/2-0.6, p.z));
+    p.y = 1.7;
+
+    updateHoverPrompt();
+  }
+
+  pickables.forEach(p => { if (!p.taken) p.mesh.rotation.y += dt * 0.25; });
+
+  renderer.render(scene, camera);
+}
+animate();
+renderInventory();
+</script>
+</body>
+</html>
