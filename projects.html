@@ -461,83 +461,85 @@
         // Each .carousel-container on the page runs completely independently —
         // its own current index and its own auto-advance timer — so clicking
         // "next" on one carousel never touches the slides in another one.
-        const carouselState = new Map(); // container -> { index, timer }
+       const carouselState = new Map(); // container -> { index, timer }
 
-        function getContainer(el) {
-            return el.closest('.carousel-container');
-        }
+function getContainer(el) {
+    return el.closest('.carousel-container');
+}
 
-        function showSlide(container, index) {
-            const slides = container.querySelectorAll('.carousel-item');
-            const dots = container.querySelectorAll('.dot');
-            if (slides.length === 0) return;
+function showSlide(container, index) {
+    const slides = container.querySelectorAll('.carousel-item');
+    const dots = container.querySelectorAll('.dot');
+    if (slides.length === 0) return;
 
-            let state = carouselState.get(container);
-            if (!state) { state = { index: 0, timer: null }; carouselState.set(container, state); }
+    let state = carouselState.get(container);
+    if (!state) { state = { index: 0, timer: null }; carouselState.set(container, state); }
 
-            // Cycle boundaries (scoped to this container's own slide count)
-            if (index >= slides.length) { state.index = 0; }
-            else if (index < 0) { state.index = slides.length - 1; }
-            else { state.index = index; }
+    // Cycle boundaries
+    if (index >= slides.length) { state.index = 0; }
+    else if (index < 0) { state.index = slides.length - 1; }
+    else { state.index = index; }
 
-            slides.forEach(slide => {
-                slide.style.display = "none";
-                slide.classList.remove('active');
-            });
-            dots.forEach(dot => dot.classList.remove('active'));
+    slides.forEach(slide => {
+        slide.style.display = "none";
+        slide.classList.remove('active');
+    });
+    dots.forEach(dot => dot.classList.remove('active'));
 
-            slides[state.index].style.display = "block";
-            slides[state.index].classList.add('active');
-            if (dots[state.index]) dots[state.index].classList.add('active');
-        }
+    const activeSlide = slides[state.index];
+    activeSlide.style.display = "block";
+    activeSlide.classList.add('active');
+    if (dots[state.index]) dots[state.index].classList.add('active');
 
-        function resetTimer(container) {
-            const state = carouselState.get(container);
-            if (state && state.timer) clearInterval(state.timer);
-            const timer = setInterval(() => moveSlide(container, 1), 2500);
-            carouselState.set(container, { ...(state || { index: 0 }), timer });
-        }
+    // --- VIDEO CHECK: If active slide has a video, pause auto-timer & play video ---
+    const video = activeSlide.querySelector('video');
+    if (video) {
+        if (state.timer) clearInterval(state.timer); // Stop 2.5s timer so it won't skip!
+        video.currentTime = 0;
+        video.play().catch(e => console.log("Autoplay blocked:", e));
+    }
+}
 
-        // Button controls — `el` is the button/dot itself, so we can find
-        // which carousel it belongs to no matter how many are on the page.
-        function moveSlide(el, step) {
-            const container = el instanceof Element ? getContainer(el) : el; // allow passing a container directly (used by the timer)
-            const state = carouselState.get(container) || { index: 0 };
-            showSlide(container, state.index + step);
-            resetTimer(container);
-        }
+function resetTimer(container) {
+    const state = carouselState.get(container);
+    if (state && state.timer) clearInterval(state.timer);
 
-        function currentSlide(el, index) {
-            const container = getContainer(el);
-            showSlide(container, index);
-            resetTimer(container);
-        }
+    // Only set a timer if the CURRENT active slide does NOT have a video running
+    const activeSlide = container.querySelector('.carousel-item.active');
+    if (activeSlide && activeSlide.querySelector('video')) {
+        return; // Don't start timer while video is active
+    }
 
-        // Initialize every carousel on the page independently
-        document.addEventListener("DOMContentLoaded", function() {
-    // 1. Initialize all carousels on the page
+    const timer = setInterval(() => moveSlide(container, 1), 2500);
+    carouselState.set(container, { ...(state || { index: 0 }), timer });
+}
+
+function moveSlide(el, step) {
+    const container = el instanceof Element ? getContainer(el) : el;
+    const state = carouselState.get(container) || { index: 0 };
+    showSlide(container, state.index + step);
+    resetTimer(container);
+}
+
+function currentSlide(el, index) {
+    const container = getContainer(el);
+    showSlide(container, index);
+    resetTimer(container);
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.carousel-container').forEach(container => {
         showSlide(container, 0);
         resetTimer(container);
     });
 
-    // 2. Handle Gazebo Video Auto-Advance (ONLY INCLUDE THIS ONCE)
+    // Listen for video ending to move to the next slide automatically
     const gazeboVid = document.getElementById('gazebo-video');
     if (gazeboVid) {
-        const container = gazeboVid.closest('.carousel-container');
-
-        // Pause the 2.5s timer while video is active
-        const state = carouselState.get(container);
-        if (state && state.timer) {
-            clearInterval(state.timer);
-        }
-
-        // Advance slide and restart timer when video finishes
         gazeboVid.addEventListener('ended', () => {
-            const nextBtn = container.querySelector('.next-btn');
-            if (nextBtn) {
-                moveSlide(nextBtn, 1);
-            }
+            const container = gazeboVid.closest('.carousel-container');
+            moveSlide(container, 1);
         });
     }
 });
