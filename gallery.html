@@ -157,7 +157,7 @@
   <div class="brand">Bashar Shaaban <span>| 3D Gallery</span></div>
   <a class="exit" href="projects.html">← Exit to Projects</a>
 </div>
-
+<canvas id="webgl-canvas"></canvas>
 <div id="canvas-wrap"></div>
 <div id="crosshair"></div>
 <div id="prompt"></div>
@@ -372,6 +372,8 @@ const KITS = [
 const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x2e3138, roughness: 0.6 });
 const pickables = []; // { object, kit, part, worldPos, taken }
 
+
+
 async function buildGalleryStations() {
       for (const [i, kit] of KITS.entries()) {
         const angle = (i / KITS.length) * Math.PI * 2;
@@ -380,33 +382,54 @@ async function buildGalleryStations() {
         const cz = Math.cos(angle) * radius * 0.85 - 1;
         const faceZ = cz >= 0 ? 1 : -1;
 
-        for (const [j, part] of kit.parts.entries()) {
-          let worldX = cx, worldZ = cz, standHeight = 0.9;
-          if (j > 0) {
-            worldX = cx + (j % 2 === 0 ? 0.8 : -0.8);
-            worldZ = cz + faceZ * (0.8 + Math.floor(j / 2) * 0.4);
-            standHeight = 0.45;
-          }
+        // Main Pedestal
+    const mainPed = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 24), pedestalMat);
+    mainPed.position.set(cx, 0.45, cz);
+    mainPed.castShadow = true; mainPed.receiveShadow = true;
+    scene.add(mainPed);
 
-          // Load GLTF & append to scene
-          const mesh = await part.local();
-          mesh.position.set(worldX, standHeight + 0.15, worldZ);
+    const spot = new THREE.SpotLight(0xfff2dd, 30, 9, Math.PI/5, 0.5, 1.5);
+    spot.position.set(cx, ROOM_H - 0.2, cz);
+    spot.target.position.set(cx, 0.6, cz);
+    scene.add(spot); scene.add(spot.target);
 
-          mesh.traverse(o => {
-            if (o.isMesh) {
-              o.castShadow = true;
-              o.receiveShadow = true;
-            }
-          });
+    // Stub positions for secondary parts
+    const stubPositions = [
+      [cx - 1.0, cz + faceZ*1.3],
+      [cx,       cz + faceZ*1.6],
+      [cx + 1.0, cz + faceZ*1.3],
+      [cx - 0.5, cz + faceZ*1.9],
+      [cx + 0.5, cz + faceZ*1.9],
+    ];
 
-          scene.add(mesh);
-          pickables.push({ mesh, kit, part, worldX, worldY: standHeight + 0.15, worldZ, taken: false });
-        }
+    for (const [j, part] of kit.parts.entries()) {
+      let worldX, worldY, worldZ, standHeight;
+      if (j === 0) {
+        worldX = cx; worldZ = cz; standHeight = 0.9;
+      } else {
+        const [sx, sz] = stubPositions[j - 1] || [cx, cz];
+        worldX = sx; worldZ = sz; standHeight = 0.45;
+        const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.25, standHeight, 16), pedestalMat);
+        stub.position.set(sx, standHeight/2, sz);
+        stub.castShadow = true; stub.receiveShadow = true;
+        scene.add(stub);
+      }
+      worldY = standHeight + 0.15;
+
+      // Load model asynchronously
+      const mesh = await part.local();
+      if (mesh) {
+        mesh.position.set(worldX, worldY, worldZ);
+        mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+        scene.add(mesh);
+        pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
       }
     }
+  }
+}
 
-    // Call the async function to execute the setup
-    buildGalleryStations();
+// Call async loader
+buildGalleryStations();
 
 function makePlaque(text1, text2, x, y, z, faceZ) {
   const canvas = document.createElement('canvas');
@@ -477,9 +500,25 @@ KITS.forEach((kit, i) => {
    ========================================================= */
 const controls = new PointerLockControls(camera, renderer.domElement);
 const splash = document.getElementById('splash');
+const startBtn = document.getElementById('start-btn'); // Matches <button id="start-btn">
 document.getElementById('start-btn').addEventListener('click', () => controls.lock());
 controls.addEventListener('lock', () => splash.style.display = 'none');
 controls.addEventListener('unlock', () => { if (!inspectOpen) splash.style.display = 'flex'; });
+
+// When user clicks "Enter Gallery", lock camera controls and hide splash
+startBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  controls.lock();
+});
+
+controls.addEventListener('lock', () => {
+  splash.style.display = 'none';
+});
+
+controls.addEventListener('unlock', () => {
+  if (!inspectOpen) splash.style.display = 'flex';
+});
+
 
 const move = { f:false, b:false, l:false, r:false, sprint:false };
 document.addEventListener('keydown', e => {
