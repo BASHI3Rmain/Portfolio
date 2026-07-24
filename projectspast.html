@@ -515,12 +515,8 @@
             else if (index < 0) { slideIndex = slides.length - 1; }
             else { slideIndex = index; }
             
-if (gazeboVideo) {
-  // Listen for when the video reaches the end
-  gazeboVideo.addEventListener('ended', () => {
-    nextSlide(); // Call your existing function that switches to the next slide
-  });
-}
+
+
             // Hide all slides and reset all active dots
             slides.forEach(slide => {
                 slide.style.display = "none";
@@ -559,9 +555,22 @@ if (gazeboVideo) {
 
         // Initialize carousel on load
         document.addEventListener("DOMContentLoaded", function() {
-            showSlide(0);
-            resetTimer(); // Start autoplaying immediately
+            // Initialize carousels
+    document.querySelectorAll('.carousel-container').forEach(container => {
+        showSlide(container, 0);
+        resetTimer(container);
+    });
+
+    // --- PUT THE IF STATEMENT HERE ---
+    const gazeboVid = document.getElementById('gazebo-video');
+    if (gazeboVid) {
+        gazeboVid.addEventListener('ended', () => {
+            // Find the carousel button inside the gazebo carousel and move to next slide
+            const nextBtn = gazeboVid.closest('.carousel-container').querySelector('.next-btn');
+            if (nextBtn) moveSlide(nextBtn, 1);
         });
+    }
+});
     </script>
   
 
