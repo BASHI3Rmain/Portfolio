@@ -495,20 +495,32 @@
 
 
 <script>
+    
         let slideIndex = 0;
         let slideTimer; // Variable to hold the auto-advance timer
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-item');
             const dots = document.querySelectorAll('.dot');
-
+            const gazeboVideo = document.getElementById('gazebo-video');
             // Prevent errors if elements don't load
             if (slides.length === 0) return;
-
+        if (gazeboVideo) {
+  // Listen for when the video reaches the end
+  gazeboVideo.addEventListener('ended', () => {
+    nextSlide(); // Call your existing function that switches to the next slide
+  });
+}
             // Cycle boundaries
             if (index >= slides.length) { slideIndex = 0; }
             else if (index < 0) { slideIndex = slides.length - 1; }
             else { slideIndex = index; }
-
+            
+if (gazeboVideo) {
+  // Listen for when the video reaches the end
+  gazeboVideo.addEventListener('ended', () => {
+    nextSlide(); // Call your existing function that switches to the next slide
+  });
+}
             // Hide all slides and reset all active dots
             slides.forEach(slide => {
                 slide.style.display = "none";
