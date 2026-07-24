@@ -306,15 +306,13 @@
         <div class="carousel-slide">
            
            <!-- Gazebo building clip-->
-            <div class="carousel-item">
-                <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
-                 <video class="carousel-video" autoplay loop muted playsinline>
-                <source src="gazebo1.mp4" alt="Inside of gazebo home theatre setup">
-                Your browser does not support the video tag.
-                </video>
-                
-                <div class="carousel-caption">Building Gazebo Montage</div>
-            </div>
+           <div class="carousel-item">
+    <video id="gazebo-video" class="carousel-video" autoplay muted playsinline>
+        <source src="gazebo1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="carousel-caption">Building Gazebo Montage</div>
+</div>
             <!-- Gazebo V1
             <div class="carousel-item">
                  --Make sure 'gazebo1.jpg' matches your actual file name! --
@@ -517,11 +515,32 @@
 
         // Initialize every carousel on the page independently
         document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll('.carousel-container').forEach(container => {
-                showSlide(container, 0);
-                resetTimer(container);
-            });
+    // 1. Initialize all carousels on the page
+    document.querySelectorAll('.carousel-container').forEach(container => {
+        showSlide(container, 0);
+        resetTimer(container);
+    });
+
+    // 2. Handle Gazebo Video Auto-Advance (ONLY INCLUDE THIS ONCE)
+    const gazeboVid = document.getElementById('gazebo-video');
+    if (gazeboVid) {
+        const container = gazeboVid.closest('.carousel-container');
+
+        // Pause the 2.5s timer while video is active
+        const state = carouselState.get(container);
+        if (state && state.timer) {
+            clearInterval(state.timer);
+        }
+
+        // Advance slide and restart timer when video finishes
+        gazeboVid.addEventListener('ended', () => {
+            const nextBtn = container.querySelector('.next-btn');
+            if (nextBtn) {
+                moveSlide(nextBtn, 1);
+            }
         });
+    }
+});
     </script>
   
 
