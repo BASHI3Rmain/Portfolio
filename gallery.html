@@ -157,7 +157,6 @@
   <div class="brand">Bashar Shaaban <span>| 3D Gallery</span></div>
   <a class="exit" href="projects.html">← Exit to Projects</a>
 </div>
-<canvas id="webgl-canvas"></canvas>
 <div id="canvas-wrap"></div>
 <div id="crosshair"></div>
 <div id="prompt"></div>
@@ -372,28 +371,51 @@ const KITS = [
 const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x2e3138, roughness: 0.6 });
 const pickables = []; // { object, kit, part, worldPos, taken }
 
+function makePlaque(text1, text2, x, y, z, faceZ) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#111'; ctx.fillRect(0,0,256,64);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Segoe UI'; ctx.fillText(text1, 10, 26);
+  ctx.fillStyle = '#4d9fff'; ctx.font = '14px Segoe UI'; ctx.fillText(text2, 10, 48);
+  const tex = new THREE.CanvasTexture(canvas);
+  const plaque = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.17), new THREE.MeshBasicMaterial({ map: tex }));
+  plaque.position.set(x, y, z);
+  plaque.rotation.y = faceZ >= 0 ? 0 : Math.PI;
+  scene.add(plaque);
+}
 
+/* A visible red wireframe stand-in shown if a part's model file
+   fails to load (missing path, bad file, server 404, etc.) so a
+   broken piece is obvious in the room instead of just vanishing. */
+function buildErrorPlaceholder() {
+  return new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.2, 0.2),
+    new THREE.MeshBasicMaterial({ color: 0xff3333, wireframe: true })
+  );
+}
 
 async function buildGalleryStations() {
-      for (const [i, kit] of KITS.entries()) {
-        const angle = (i / KITS.length) * Math.PI * 2;
-        const radius = 6.5;
-        const cx = Math.sin(angle) * radius;
-        const cz = Math.cos(angle) * radius * 0.85 - 1;
-        const faceZ = cz >= 0 ? 1 : -1;
+  for (const [i, kit] of KITS.entries()) {
+    const angle = (i / KITS.length) * Math.PI * 2;
+    const radius = 6.5;
+    const cx = Math.sin(angle) * radius;
+    const cz = Math.cos(angle) * radius * 0.85 - 1;
+    const faceZ = cz >= 0 ? 1 : -1;
 
-        // Main Pedestal
+    // Main Pedestal
     const mainPed = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 24), pedestalMat);
     mainPed.position.set(cx, 0.45, cz);
     mainPed.castShadow = true; mainPed.receiveShadow = true;
     scene.add(mainPed);
+    makePlaque(kit.name, kit.meta, cx, 0.05, cz + faceZ*0.56, faceZ);
 
     const spot = new THREE.SpotLight(0xfff2dd, 30, 9, Math.PI/5, 0.5, 1.5);
     spot.position.set(cx, ROOM_H - 0.2, cz);
     spot.target.position.set(cx, 0.6, cz);
     scene.add(spot); scene.add(spot.target);
 
-    // Stub positions for secondary parts
+    // Stub positions for secondary parts (add more rows here if a kit ever needs more than 5 sub-parts)
     const stubPositions = [
       [cx - 1.0, cz + faceZ*1.3],
       [cx,       cz + faceZ*1.6],
@@ -413,111 +435,44 @@ async function buildGalleryStations() {
         stub.position.set(sx, standHeight/2, sz);
         stub.castShadow = true; stub.receiveShadow = true;
         scene.add(stub);
+        makePlaque(part.name, kit.name, sx, standHeight - 0.35, sz + faceZ*0.32, faceZ);
       }
       worldY = standHeight + 0.15;
 
-      // Load model asynchronously
-      const mesh = await part.local();
-      if (mesh) {
-        mesh.position.set(worldX, worldY, worldZ);
-        mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
-        scene.add(mesh);
-        pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
+      // Load the model asynchronously — a failed/missing file logs a
+      // clear error and drops in a red wireframe marker instead of
+      // silently breaking the rest of the room.
+      let mesh;
+      try {
+        mesh = await part.local();
+        if (!mesh) throw new Error('local() returned nothing');
+      } catch (err) {
+        console.error(`Failed to load model for part "${part.name}" (${part.id}):`, err);
+        mesh = buildErrorPlaceholder();
       }
+      mesh.position.set(worldX, worldY, worldZ);
+      mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+      scene.add(mesh);
+      pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
     }
   }
 }
 
-// Call async loader
-buildGalleryStations();
-
-function makePlaque(text1, text2, x, y, z, faceZ) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256; canvas.height = 64;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#111'; ctx.fillRect(0,0,256,64);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Segoe UI'; ctx.fillText(text1, 10, 26);
-  ctx.fillStyle = '#4d9fff'; ctx.font = '14px Segoe UI'; ctx.fillText(text2, 10, 48);
-  const tex = new THREE.CanvasTexture(canvas);
-  const plaque = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.17), new THREE.MeshBasicMaterial({ map: tex }));
-  plaque.position.set(x, y, z);
-  plaque.rotation.y = faceZ >= 0 ? 0 : Math.PI;
-  scene.add(plaque);
-}
-
-KITS.forEach((kit, i) => {
-  const angle = (i / KITS.length) * Math.PI * 2;
-  const radius = 6.5;
-  const cx = Math.sin(angle) * radius;
-  const cz = Math.cos(angle) * radius * 0.85 - 1;
-  const faceZ = cz >= 0 ? 1 : -1;
-
-  // main pedestal for the largest part (index 0)
-  const mainPed = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 24), pedestalMat);
-  mainPed.position.set(cx, 0.45, cz);
-  mainPed.castShadow = true; mainPed.receiveShadow = true;
-  scene.add(mainPed);
-  makePlaque(kit.name, kit.meta, cx, 0.05, cz + faceZ*0.56, faceZ);
-
-  const spot = new THREE.SpotLight(0xfff2dd, 30, 9, Math.PI/5, 0.5, 1.5);
-  spot.position.set(cx, ROOM_H - 0.2, cz);
-  spot.target.position.set(cx, 0.6, cz);
-  scene.add(spot); scene.add(spot.target);
-
-  // stub stands for the remaining parts, arranged in a small arc in front
-  const stubPositions = [
-    [cx - 1.0, cz + faceZ*1.3],
-    [cx,        cz + faceZ*1.6],
-    [cx + 1.0, cz + faceZ*1.3],
-  ];
-
-  kit.parts.forEach((part, j) => {
-    let worldX, worldY, worldZ, standHeight;
-    if (j === 0) {
-      worldX = cx; worldZ = cz; standHeight = 0.9;
-    } else {
-      const [sx, sz] = stubPositions[j-1];
-      worldX = sx; worldZ = sz; standHeight = 0.45;
-      const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.25, standHeight, 16), pedestalMat);
-      stub.position.set(sx, standHeight/2, sz);
-      stub.castShadow = true; stub.receiveShadow = true;
-      scene.add(stub);
-      makePlaque(part.name, kit.name, sx, standHeight - 0.35, sz + faceZ*0.32, faceZ);
-    }
-    worldY = standHeight + 0.15;
-
-    const mesh = part.local();
-    mesh.position.set(worldX, worldY, worldZ);
-    mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
-    scene.add(mesh);
-
-    pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
-  });
-});
+buildGalleryStations().catch(err => console.error('Gallery station build failed:', err));
 
 /* =========================================================
    FIRST PERSON CONTROLS
    ========================================================= */
 const controls = new PointerLockControls(camera, renderer.domElement);
 const splash = document.getElementById('splash');
-const startBtn = document.getElementById('start-btn'); // Matches <button id="start-btn">
-document.getElementById('start-btn').addEventListener('click', () => controls.lock());
-controls.addEventListener('lock', () => splash.style.display = 'none');
-controls.addEventListener('unlock', () => { if (!inspectOpen) splash.style.display = 'flex'; });
+const startBtn = document.getElementById('start-btn');
 
-// When user clicks "Enter Gallery", lock camera controls and hide splash
 startBtn.addEventListener('click', (e) => {
   e.preventDefault();
   controls.lock();
 });
-
-controls.addEventListener('lock', () => {
-  splash.style.display = 'none';
-});
-
-controls.addEventListener('unlock', () => {
-  if (!inspectOpen) splash.style.display = 'flex';
-});
+controls.addEventListener('lock', () => splash.style.display = 'none');
+controls.addEventListener('unlock', () => { if (!inspectOpen) splash.style.display = 'flex'; });
 
 
 const move = { f:false, b:false, l:false, r:false, sprint:false };
@@ -570,14 +525,21 @@ const combineBtn = document.getElementById('combine-btn');
 const combineMsg = document.getElementById('combine-msg');
 let uid = 0;
 
-function buildKitObject(kit, partIds) {
+async function buildKitObject(kit, partIds) {
   const g = new THREE.Group();
-  kit.parts.filter(p => partIds.has(p.id)).forEach(p => {
-    const mesh = p.local();
+  for (const p of kit.parts.filter(p => partIds.has(p.id))) {
+    let mesh;
+    try {
+      mesh = await p.local();
+      if (!mesh) throw new Error('local() returned nothing');
+    } catch (err) {
+      console.error(`Failed to load model for part "${p.name}" (${p.id}):`, err);
+      mesh = buildErrorPlaceholder();
+    }
     mesh.position.set(...p.assembled.pos);
     mesh.rotation.set(...p.assembled.rot);
     g.add(mesh);
-  });
+  }
   return g;
 }
 
@@ -671,25 +633,32 @@ combineBtn.addEventListener('click', () => {
   if (mergedIds.size === kit.parts.length) showCombineMsg(`${kit.name} fully assembled! ✅`);
 });
 
-function dropItem(item) {
+async function dropItem(item) {
   inventory = inventory.filter(i => i.uid !== item.uid);
   const kit = KITS.find(k => k.id === item.kitId);
-  item.partIds.forEach(partId => {
+  for (const partId of item.partIds) {
     const slotInfo = pickables.find(p => p.kit.id === kit.id && p.part.id === partId && p.taken);
-    if (!slotInfo) return;
-    const restored = slotInfo.part.local();
+    if (!slotInfo) continue;
+    let restored;
+    try {
+      restored = await slotInfo.part.local();
+      if (!restored) throw new Error('local() returned nothing');
+    } catch (err) {
+      console.error(`Failed to reload model for part "${slotInfo.part.name}":`, err);
+      restored = buildErrorPlaceholder();
+    }
     restored.position.set(slotInfo.worldX, slotInfo.worldY, slotInfo.worldZ);
     restored.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
     scene.add(restored);
     slotInfo.mesh = restored;
     slotInfo.taken = false;
-  });
+  }
   renderInventory();
 }
 
-function downloadItem(item) {
+async function downloadItem(item) {
   const kit = KITS.find(k => k.id === item.kitId);
-  const obj = buildKitObject(kit, item.partIds);
+  const obj = await buildKitObject(kit, item.partIds);
   const exporter = new GLTFExporter();
   const info = itemLabel(item);
   exporter.parse(obj, (result) => {
@@ -732,10 +701,10 @@ const orbit = new OrbitControls(inspectCamera, inspectRenderer.domElement);
 orbit.enableDamping = true;
 
 let currentInspectObj = null;
-function openInspect(item) {
+async function openInspect(item) {
   if (currentInspectObj) inspectScene.remove(currentInspectObj);
   const kit = KITS.find(k => k.id === item.kitId);
-  currentInspectObj = buildKitObject(kit, item.partIds);
+  currentInspectObj = await buildKitObject(kit, item.partIds);
   const box = new THREE.Box3().setFromObject(currentInspectObj);
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3()).length() || 1;
