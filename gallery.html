@@ -554,16 +554,16 @@ canvasWrap.addEventListener('click', () => {
 
 const move = { f:false, b:false, l:false, r:false, sprint:false };
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyW') move.f = true;
-  if (e.code === 'KeyS') move.b = true;
+  if (e.code === 'KeyS') move.f = true;
+  if (e.code === 'KeyW') move.b = true;
   if (e.code === 'KeyA') move.l = true;
   if (e.code === 'KeyD') move.r = true;
   if (e.code === 'ShiftLeft') move.sprint = true;
   if (e.code === 'KeyE') tryPickup();
 });
 document.addEventListener('keyup', e => {
-  if (e.code === 'KeyW') move.f = false;
-  if (e.code === 'KeyS') move.b = false;
+  if (e.code === 'KeyS') move.f = false;
+  if (e.code === 'KeyW') move.b = false;
   if (e.code === 'KeyA') move.l = false;
   if (e.code === 'KeyD') move.r = false;
   if (e.code === 'ShiftLeft') move.sprint = false;
