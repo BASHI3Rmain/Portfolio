@@ -16,10 +16,10 @@
 	"nodes": [
 		{
 			"matrix": [
-				-0.737095,					0.504213,					-0.449957,					0,
-				-0.320316,					-0.84695,					-0.424352,					0,
-				-0.595054,					-0.168659,					0.785789,					0,
-				-0.490758,					0.0462695,					0.688037,					1
+				-0.544142,					-0.184998,					0.818343,					0,
+				0.624511,					-0.740655,					0.247822,					0,
+				0.560263,					0.645915,					0.518555,					0,
+				0.558783,					0.842229,					0.552404,					1
 			]
 			,"camera": 0
 			,"name": "current"		}
@@ -42,22 +42,12 @@
 ,
 		{
 			"matrix": [
-				-0.992809,					-0.000865651,					-0.119703,					0,
-				-0.119704,					0.0133359,					0.99272,					0,
-				0.000737008,					0.999911,					-0.0133437,					0,
-				-0.0307058,					0.194229,					-0.0108711,					1
-			]
-			,"mesh": 1
-			,"name": "CarePackageSlider-1"		}
-,
-		{
-			"matrix": [
 				0.992809,					0.000865651,					0.119703,					0,
 				-0.119704,					0.0133359,					0.99272,					0,
 				-0.000737008,					-0.999911,					0.0133437,					0,
 				-0.03434,					0.136134,					0.0196911,					1
 			]
-			,"mesh": 2
+			,"mesh": 1
 			,"name": "CarePackageDrone2-1"		}
 ,
 		{
@@ -67,8 +57,18 @@
 				-0.703993,					0.00999556,					0.710136,					0,
 				-0.0546105,					0.11873,					0.0250356,					1
 			]
-			,"mesh": 3
+			,"mesh": 2
 			,"name": "CarePackageCirclePin-1"		}
+,
+		{
+			"matrix": [
+				-0.992809,					-0.000865651,					-0.119703,					0,
+				-0.119704,					0.0133359,					0.99272,					0,
+				0.000737008,					0.999911,					-0.0133437,					0,
+				-0.0275294,					0.193875,					-0.0372138,					1
+			]
+			,"mesh": 3
+			,"name": "CarePackageSlider-1"		}
 ,
 		{
 			"matrix": [
@@ -198,7 +198,7 @@
 					},
 					"indices" : 16,
 					"mode": 4,
-					"material" : 4
+					"material" : 3
 					,"extensions": {
 					"KHR_draco_mesh_compression": {
 					"bufferView": 4,
@@ -234,28 +234,6 @@
 			{
 				"componentType" : 5126
 				,"count" : 17956
-				,"type" : "VEC2"
-			},
-			{
-				"componentType" : 5123
-				,"count" : 192
-				,"type" : "SCALAR"
-			},
-			{
-				"componentType" : 5126
-				,"count" : 92
-				,"type" : "VEC3"
-				,"min" : [-3.59999985e-02, -1.36190677e-11, -2.00000009e-03]
-				,"max" : [3.59999985e-02, 7.85000026e-02, 2.00000009e-03]
-			},
-			{
-				"componentType" : 5126
-				,"count" : 92
-				,"type" : "VEC3"
-			},
-			{
-				"componentType" : 5126
-				,"count" : 92
 				,"type" : "VEC2"
 			},
 			{
@@ -304,6 +282,28 @@
 			},
 			{
 				"componentType" : 5123
+				,"count" : 192
+				,"type" : "SCALAR"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+				,"min" : [-3.59999985e-02, -1.36190668e-11, -2.00000009e-03]
+				,"max" : [3.59999985e-02, 7.85000026e-02, 2.00000009e-03]
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC3"
+			},
+			{
+				"componentType" : 5126
+				,"count" : 92
+				,"type" : "VEC2"
+			},
+			{
+				"componentType" : 5123
 				,"count" : 4086
 				,"type" : "SCALAR"
 			},
@@ -336,20 +336,6 @@
 				}
 			},
 			{
-				"name": "White-PW-MT11050-3"
-					,"normalTexture": {
-						"index": 0
-						,"scale": 0.3
-					}
-				,"pbrMetallicRoughness": {
-					"baseColorFactor": [
-						0.698039, 0.698039, 0.698039, 1
-					]
-					,"metallicFactor": 0
-					,"roughnessFactor": 1
-				}
-			},
-			{
 				"name": "White-PW-MT11050-1"
 					,"normalTexture": {
 						"index": 0
@@ -364,7 +350,7 @@
 				}
 			},
 			{
-				"name": "White-PW-MT11050-2"
+				"name": "White-PW-MT11050"
 					,"normalTexture": {
 						"index": 0
 						,"scale": 0.3
@@ -378,7 +364,21 @@
 				}
 			},
 			{
-				"name": "White-PW-MT11050"
+				"name": "White-PW-MT11050-3"
+					,"normalTexture": {
+						"index": 0
+						,"scale": 0.3
+					}
+				,"pbrMetallicRoughness": {
+					"baseColorFactor": [
+						0.698039, 0.698039, 0.698039, 1
+					]
+					,"metallicFactor": 0
+					,"roughnessFactor": 1
+				}
+			},
+			{
+				"name": "White-PW-MT11050-2"
 					,"normalTexture": {
 						"index": 0
 						,"scale": 0.3
@@ -422,17 +422,17 @@
 			{
 				"buffer": 0
 				,"byteOffset" : 74884
-				,"byteLength" : 580
-			},
-			{
-				"buffer": 0
-				,"byteOffset" : 75464
 				,"byteLength" : 30092
 			},
 			{
 				"buffer": 0
-				,"byteOffset" : 105556
+				,"byteOffset" : 104976
 				,"byteLength" : 4748
+			},
+			{
+				"buffer": 0
+				,"byteOffset" : 109724
+				,"byteLength" : 580
 			},
 			{
 				"buffer": 0

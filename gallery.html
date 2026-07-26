@@ -210,13 +210,55 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
 async function loadModel(path) {
-  const gltf = await gltfLoader.loadAsync(path);
+  // Fetch the raw .gltf JSON ourselves (instead of gltfLoader.loadAsync,
+  // which fetches the buffer URI exactly as written in the file) so we can
+  // patch two common export quirks before parsing:
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`Failed to fetch ${path}: HTTP ${res.status}`);
+  const json = await res.json();
+
+  // 1) Many exporters always name the binary buffer "data.bin" inside the
+  //    .gltf file itself, even when you've renamed the .gltf/.bin pair on
+  //    disk to match the part. Point every buffer at THIS file's own
+  //    matching .bin instead of trusting whatever name is embedded.
+  const expectedBin = path.split('/').pop().replace(/\.gltf$/i, '.bin');
+  if (Array.isArray(json.buffers)) {
+    json.buffers.forEach(buf => {
+      if (buf.uri && !buf.uri.startsWith('data:')) buf.uri = expectedBin;
+    });
+  }
+
+  // 2) Strip all texture/image references and force a clean neutral-grey
+  //    material. Avoids unsupported formats (.dds, etc.) or textures that
+  //    just aren't uploaded yet from breaking the load. Swap a part back to
+  //    real textures later by removing its entry from this strip step once
+  //    web-friendly (.png/.jpg) textures are exported and uploaded.
+  delete json.images;
+  delete json.textures;
+  if (Array.isArray(json.materials)) {
+    json.materials.forEach(mat => {
+      delete mat.normalTexture;
+      delete mat.occlusionTexture;
+      delete mat.emissiveTexture;
+      if (mat.pbrMetallicRoughness) {
+        delete mat.pbrMetallicRoughness.baseColorTexture;
+        delete mat.pbrMetallicRoughness.metallicRoughnessTexture;
+        mat.pbrMetallicRoughness.baseColorFactor = [0.72, 0.73, 0.76, 1];
+        mat.pbrMetallicRoughness.metallicFactor = 0.15;
+        mat.pbrMetallicRoughness.roughnessFactor = 0.55;
+      }
+    });
+  }
+
+  const resourcePath = path.substring(0, path.lastIndexOf('/') + 1);
+  const gltf = await new Promise((resolve, reject) => {
+    gltfLoader.parse(JSON.stringify(json), resourcePath, resolve, reject);
+  });
   return gltf.scene;
 }
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
 /* =========================================================
    SCENE SETUP
@@ -554,16 +596,16 @@ canvasWrap.addEventListener('click', () => {
 
 const move = { f:false, b:false, l:false, r:false, sprint:false };
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyS') move.f = true;
-  if (e.code === 'KeyW') move.b = true;
+  if (e.code === 'KeyW') move.f = true;
+  if (e.code === 'KeyS') move.b = true;
   if (e.code === 'KeyA') move.l = true;
   if (e.code === 'KeyD') move.r = true;
   if (e.code === 'ShiftLeft') move.sprint = true;
   if (e.code === 'KeyE') tryPickup();
 });
 document.addEventListener('keyup', e => {
-  if (e.code === 'KeyS') move.f = false;
-  if (e.code === 'KeyW') move.b = false;
+  if (e.code === 'KeyW') move.f = false;
+  if (e.code === 'KeyS') move.b = false;
   if (e.code === 'KeyA') move.l = false;
   if (e.code === 'KeyD') move.r = false;
   if (e.code === 'ShiftLeft') move.sprint = false;
@@ -651,7 +693,7 @@ function renderInventory() {
       <div class="row"><label class="combine-check"><input type="checkbox" data-uid="${item.uid}" class="combine-cb"> combine</label></div>
       <div class="row" style="margin-top:6px;">
         <button data-action="inspect" data-uid="${item.uid}">Inspect</button>
-        <button data-action="download" data-uid="${item.uid}">Download .glb</button>
+        <button data-action="download" data-uid="${item.uid}">Download STL</button>
         <button data-action="drop" data-uid="${item.uid}">Drop</button>
       </div>`;
     slotsEl.appendChild(slot);
@@ -733,27 +775,26 @@ async function dropItem(item) {
   renderInventory();
 }
 
-async function downloadItem(item) {
+function downloadItem(item) {
   const kit = KITS.find(k => k.id === item.kitId);
-  const obj = await buildKitObject(kit, item.partIds);
-  const exporter = new GLTFExporter();
-  const info = itemLabel(item);
-  exporter.parse(obj, (result) => {
-    let blob, filename;
-    if (result instanceof ArrayBuffer) {
-      blob = new Blob([result], { type: 'application/octet-stream' });
-      filename = `${slugify(kit.name + '-' + info.sub)}.glb`;
-    } else {
-      blob = new Blob([JSON.stringify(result)], { type: 'application/json' });
-      filename = `${slugify(kit.name)}.gltf`;
-    }
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-  }, (err) => console.error('Export failed', err), { binary: true });
+  // Downloads the real STL file for every part in this slot (more than one
+  // file if this is a combined assembly) — assumes each STL lives at
+  // models/<part-id>.stl, matching the naming convention already used for
+  // the .gltf/.bin pairs. Rename the files in models/ if yours differ.
+  [...item.partIds].forEach((partId, i) => {
+    const part = kit.parts.find(p => p.id === partId);
+    const url = `models/${partId}.stl`;
+    // Stagger slightly so multi-part downloads don't get blocked as a popup burst.
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${partId}.stl`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }, i * 250);
+  });
 }
-function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 
 /* =========================================================
    INSPECT MODE
@@ -846,7 +887,7 @@ function animate() {
     const speed = move.sprint ? 6.5 : 3.6;
     velocity.x -= velocity.x * 8 * dt;
     velocity.z -= velocity.z * 8 * dt;
-    const dir = new THREE.Vector3(Number(move.r)-Number(move.l), 0, Number(move.b)-Number(move.f)).normalize();
+    const dir = new THREE.Vector3(Number(move.r)-Number(move.l), 0, Number(move.f)-Number(move.b)).normalize();
     if (move.f||move.b) velocity.z -= dir.z * speed * dt * 10;
     if (move.l||move.r) velocity.x -= dir.x * speed * dt * 10;
 
