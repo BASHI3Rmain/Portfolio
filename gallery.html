@@ -100,7 +100,9 @@
     padding: 8px 10px; min-width: 160px; flex-shrink: 0;
   }
   .slot.complete { border-color: #d97706; box-shadow: 0 0 0 1px rgba(217,119,6,0.4) inset; }
-  .slot .swatch { width: 100%; height: 30px; border-radius: 4px; margin-bottom: 6px; }
+  .slot .swatch { width: 100%; height: 60px; border-radius: 4px; margin-bottom: 6px; background: #12141a; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .slot .swatch img { width: 100%; height: 100%; object-fit: contain; }
+  .slot .swatch .fallback { width:100%; height:100%; }
   .slot .name { font-size: 0.8rem; font-weight: bold; color: #fff; margin-bottom: 2px; }
   .slot .progress { font-size: 0.7rem; color: #d97706; margin-bottom: 6px; }
   .slot .progress.done { color: #4dff88; }
@@ -256,6 +258,17 @@ async function loadModel(path) {
   });
   return gltf.scene;
 }
+
+/* Loading + patching a .gltf is relatively expensive (fetch, JSON patch,
+   parse) and the same part gets displayed on its pedestal, re-shown in
+   combine previews, inspected, and thumbnail-rendered — so cache the
+   parsed template per path and hand back a clone each time instead of
+   redoing the network+parse work. */
+const modelTemplateCache = new Map(); // path -> Promise<THREE.Object3D> (uncloned template)
+function loadModelCached(path) {
+  if (!modelTemplateCache.has(path)) modelTemplateCache.set(path, loadModel(path));
+  return modelTemplateCache.get(path).then(tmpl => tmpl.clone(true));
+}
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -371,47 +384,48 @@ const KITS = [
     name: 'Care Package Drone Addon',
     meta: 'Drone Project',
     color: '#4d9fff',
+    finalAssemblyPath: 'models/carepackagedroneassembly.gltf',
     parts: [
       { 
         id: 'carepackage_screw', 
         name: 'Screw', 
         file: 'carepackage_screw.gltf', 
-        local: () => loadModel('models/carepackage_screw.gltf'), 
+        local: () => loadModelCached('models/carepackage_screw.gltf'), 
         assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
       },
       { 
         id: 'carepackagebot', 
         name: 'Bottom Encasing', 
         file: 'carepackagebot.gltf', 
-        local: () => loadModel('models/carepackagebot.gltf'), 
+        local: () => loadModelCached('models/carepackagebot.gltf'), 
         assembled: { pos: [0, -0.05, 0], rot: [0, 0, 0] } 
       },
       { 
         id: 'carepackagecarriage', 
         name: 'Drone Carriage', 
         file: 'carepackagecarriage.gltf', 
-        local: () => loadModel('models/carepackagecarriage.gltf'), 
+        local: () => loadModelCached('models/carepackagecarriage.gltf'), 
         assembled: { pos: [-0.03, 0.194, -0.01], rot: [0, 0, 0] } 
       },
       { 
         id: 'carepackagecirclepin', 
         name: 'Circle Pin', 
         file: 'carepackagecirclepin.gltf', 
-        local: () => loadModel('models/carepackagecirclepin.gltf'), 
+        local: () => loadModelCached('models/carepackagecirclepin.gltf'), 
         assembled: { pos: [-0.054, 0.118, 0.025], rot: [0, 0, 0] } 
       },
       { 
         id: 'carepackageslider', 
         name: 'Carriage Slider', 
         file: 'carepackageslider.gltf', 
-        local: () => loadModel('models/carepackageslider.gltf'), 
+        local: () => loadModelCached('models/carepackageslider.gltf'), 
         assembled: { pos: [-0.034, 0.136, 0.019], rot: [0, 0, 0] } 
       },
       { 
         id: 'carepackagetop', 
         name: 'Top Encasing', 
         file: 'carepackagetop.gltf', 
-        local: () => loadModel('models/carepackagetop.gltf'), 
+        local: () => loadModelCached('models/carepackagetop.gltf'), 
         assembled: { pos: [0, 0.4, 0], rot: [0, 0, 0] } 
       }
   ]
@@ -482,7 +496,7 @@ async function buildGalleryStations() {
     spot.target.position.set(cx, 0.6, cz);
     scene.add(spot); scene.add(spot.target);
 
-    makePlaque(kit.name, kit.meta, cx, STAND_HEIGHT + 0.5, cz + faceZ*0.5, faceZ);
+    makePlaque(kit.name, kit.meta, cx, STAND_HEIGHT + 1.5, cz + faceZ*0.5, faceZ);
 
     // Every non-anchor part gets its own randomized (but stable) spot,
     // spread wide around the anchor piece so stands and plaques don't crowd.
@@ -507,7 +521,10 @@ async function buildGalleryStations() {
       stand.position.set(worldX, STAND_HEIGHT/2, worldZ);
       stand.castShadow = true; stand.receiveShadow = true;
       scene.add(stand);
-      if (j !== 0) makePlaque(part.name, kit.name, worldX, STAND_HEIGHT + 0.18, worldZ + faceZ*0.32, faceZ);
+      // Every part gets its own "Part Name / Kit Name" plaque, same as
+      // every other piece — no exceptions for whichever part happens to
+      // be the anchor (index 0).
+      makePlaque(part.name, kit.name, worldX, STAND_HEIGHT + 0.18, worldZ + faceZ*0.32, faceZ);
 
       const worldY = STAND_HEIGHT + 0.15;
 
@@ -644,7 +661,50 @@ const combineBtn = document.getElementById('combine-btn');
 const combineMsg = document.getElementById('combine-msg');
 let uid = 0;
 
+/* =========================================================
+   REAL ASSEMBLY TRANSFORMS — instead of trusting the hand-typed
+   `assembled.pos/rot` guesses, load the actual final assembly file
+   once per kit and read each part's real position/rotation straight
+   out of its scene graph (matched by node name to each part's id/name).
+   Falls back to the manual `assembled` values for any part that can't
+   be matched, so nothing breaks even if names don't line up.
+   ========================================================= */
+const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+async function getAssemblyTransforms(kit) {
+  if (kit._assemblyTransforms) return kit._assemblyTransforms;
+  const map = new Map();
+  if (!kit.finalAssemblyPath) { kit._assemblyTransforms = map; return map; }
+
+  try {
+    const assemblyScene = await loadModelCached(kit.finalAssemblyPath);
+    assemblyScene.updateMatrixWorld(true);
+
+    const nodes = [];
+    assemblyScene.traverse(n => { if (n !== assemblyScene && n.name) nodes.push(n); });
+    console.log(`[${kit.name}] assembly node names found:`, nodes.map(n => n.name));
+
+    kit.parts.forEach(part => {
+      const partKey = norm(part.id), nameKey = norm(part.name);
+      const match = nodes.find(n => {
+        const nk = norm(n.name);
+        return nk && (nk.includes(partKey) || partKey.includes(nk) || nk.includes(nameKey) || nameKey.includes(nk));
+      });
+      if (match) {
+        map.set(part.id, { position: match.position.clone(), quaternion: match.quaternion.clone() });
+      } else {
+        console.warn(`[${kit.name}] no assembly node matched part "${part.name}" (${part.id}) — using its manual 'assembled' offset instead. Check the node names logged above and rename if you'd like an exact match.`);
+      }
+    });
+  } catch (err) {
+    console.error(`Could not read real transforms from ${kit.finalAssemblyPath}, falling back to manual offsets for every part:`, err);
+  }
+  kit._assemblyTransforms = map;
+  return map;
+}
+
 async function buildKitObject(kit, partIds) {
+  const transforms = await getAssemblyTransforms(kit);
   const g = new THREE.Group();
   for (const p of kit.parts.filter(p => partIds.has(p.id))) {
     let mesh;
@@ -655,8 +715,14 @@ async function buildKitObject(kit, partIds) {
       console.error(`Failed to load model for part "${p.name}" (${p.id}):`, err);
       mesh = buildErrorPlaceholder();
     }
-    mesh.position.set(...p.assembled.pos);
-    mesh.rotation.set(...p.assembled.rot);
+    const t = transforms.get(p.id);
+    if (t) {
+      mesh.position.copy(t.position);
+      mesh.quaternion.copy(t.quaternion);
+    } else {
+      mesh.position.set(...p.assembled.pos);
+      mesh.rotation.set(...p.assembled.rot);
+    }
     g.add(mesh);
   }
   return g;
@@ -687,7 +753,7 @@ function renderInventory() {
     const slot = document.createElement('div');
     slot.className = 'slot' + (info.done ? ' complete' : '');
     slot.innerHTML = `
-      <div class="swatch" style="background:${item.color}"></div>
+      <div class="swatch" id="swatch-${item.uid}"><div class="fallback" style="background:${item.color}"></div></div>
       <div class="name">${info.done ? '✅ ' : ''}${info.name}</div>
       <div class="progress ${info.done ? 'done' : ''}">${info.sub}</div>
       <div class="row"><label class="combine-check"><input type="checkbox" data-uid="${item.uid}" class="combine-cb"> combine</label></div>
@@ -699,6 +765,59 @@ function renderInventory() {
     slotsEl.appendChild(slot);
   });
   updateCombineBtn();
+  updateThumbnails();
+}
+
+/* =========================================================
+   INVENTORY THUMBNAILS — render each held item to a small
+   offscreen canvas instead of showing a flat color bar. Cached
+   per exact combination of parts held, so re-renders don't
+   redo the work unless the item's contents actually changed.
+   ========================================================= */
+const thumbScene = new THREE.Scene();
+thumbScene.background = new THREE.Color(0x12141a);
+const thumbCamera = new THREE.PerspectiveCamera(35, 1, 0.05, 20);
+const thumbRenderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
+thumbRenderer.setSize(160, 160);
+thumbScene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const thumbLight = new THREE.DirectionalLight(0xffffff, 1.1);
+thumbLight.position.set(2, 3, 2);
+thumbScene.add(thumbLight);
+
+async function generateThumbnail(item) {
+  const kit = KITS.find(k => k.id === item.kitId);
+  const obj = await buildKitObject(kit, item.partIds);
+  const centroid = computeCentroid(obj);
+  obj.position.sub(centroid);
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3()).length() || 1;
+  obj.scale.setScalar(1.1 / size);
+
+  thumbScene.add(obj);
+  thumbCamera.position.set(1.1, 0.9, 1.3);
+  thumbCamera.lookAt(0, 0, 0);
+  thumbRenderer.render(thumbScene, thumbCamera);
+  const dataURL = thumbRenderer.domElement.toDataURL('image/png');
+  thumbScene.remove(obj);
+  return dataURL;
+}
+
+function updateThumbnails() {
+  inventory.forEach(item => {
+    const key = [...item.partIds].sort().join(',');
+    const el = document.getElementById(`swatch-${item.uid}`);
+    if (!el) return;
+    if (item._thumbKey === key && item._thumbURL) {
+      el.innerHTML = `<img src="${item._thumbURL}" alt="${item.kitName}">`;
+      return;
+    }
+    generateThumbnail(item).then(url => {
+      item._thumbKey = key;
+      item._thumbURL = url;
+      const liveEl = document.getElementById(`swatch-${item.uid}`);
+      if (liveEl) liveEl.innerHTML = `<img src="${url}" alt="${item.kitName}">`;
+    }).catch(err => console.error('Thumbnail render failed for item', item, err));
+  });
 }
 
 slotsEl.addEventListener('click', e => {
@@ -717,6 +836,56 @@ slotsEl.addEventListener('change', e => {
   if (item) item.selected = e.target.checked;
   updateCombineBtn();
 });
+
+/* =========================================================
+   COMPLETION LINE — finished assemblies don't sit in your
+   inventory forever; they "emerge" as the real assembled model
+   on their own pedestal in a dedicated row, lined up so future
+   completed kits join the same row.
+   ========================================================= */
+const COMPLETION_X0 = -4, COMPLETION_SPACING = 2.6, COMPLETION_Z = ROOM_D/2 - 3;
+let completedCount = 0;
+
+async function placeCompletedAssembly(kit) {
+  const idx = completedCount++;
+  const x = COMPLETION_X0 + idx * COMPLETION_SPACING;
+  const z = COMPLETION_Z;
+
+  const stand = new THREE.Mesh(new THREE.CylinderGeometry(STAND_RADIUS_TOP, STAND_RADIUS_BOTTOM, STAND_HEIGHT, 24), pedestalMat);
+  stand.position.set(x, STAND_HEIGHT/2, z);
+  stand.castShadow = true; stand.receiveShadow = true;
+  scene.add(stand);
+  makePlaque(`${kit.name} ✅`, 'Completed Assembly', x, STAND_HEIGHT + 0.18, z + 0.32, 1);
+
+  const spot = new THREE.SpotLight(0xfff2dd, 35, 12, Math.PI/4, 0.5, 1.5);
+  spot.position.set(x, ROOM_H - 0.2, z);
+  spot.target.position.set(x, 0.6, z);
+  scene.add(spot); scene.add(spot.target);
+
+  const worldY = STAND_HEIGHT + 0.15;
+  let mesh;
+  try {
+    mesh = await loadModelCached(kit.finalAssemblyPath);
+    if (!mesh) throw new Error('load returned nothing');
+  } catch (err) {
+    console.error(`Failed to load completed assembly for ${kit.name}:`, err);
+    mesh = buildErrorPlaceholder();
+  }
+  mesh.position.set(x, worldY, z);
+  mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+  scene.add(mesh);
+
+  // Register it as pickable too, using its own single-part pseudo-kit so
+  // it can be walked up to, inspected, downloaded, or dropped back here
+  // just like any other piece — it's just registered under a dedicated
+  // "-complete" kit id so it never gets mixed back into combine attempts.
+  const pseudoPart = { id: `${kit.id}-complete-part`, name: `${kit.name} (Complete)`,
+    local: () => loadModelCached(kit.finalAssemblyPath), assembled: { pos:[0,0,0], rot:[0,0,0] } };
+  const pseudoKit = { id: `${kit.id}-complete`, name: kit.name, meta: 'Completed Assembly', color: kit.color,
+    finalAssemblyPath: kit.finalAssemblyPath, parts: [pseudoPart] };
+  KITS.push(pseudoKit);
+  pickables.push({ mesh, kit: pseudoKit, part: pseudoPart, worldX: x, worldY, worldZ: z, taken: false });
+}
 
 function updateCombineBtn() {
   const n = inventory.filter(i => i.selected).length;
@@ -744,12 +913,20 @@ combineBtn.addEventListener('click', () => {
   if (overlap) { showCombineMsg('You already have both of those pieces together.'); return; }
 
   const mergedIds = new Set([...a.partIds, ...b.partIds]);
-  inventory = inventory.filter(i => !i.selected);
-  inventory.push({ uid: uid++, kitId: a.kitId, kitName: a.kitName, color: a.color, partIds: mergedIds, selected: false });
-  renderInventory();
-
   const kit = KITS.find(k => k.id === a.kitId);
-  if (mergedIds.size === kit.parts.length) showCombineMsg(`${kit.name} fully assembled! ✅`);
+  inventory = inventory.filter(i => !i.selected);
+
+  if (mergedIds.size === kit.parts.length) {
+    // Full assembly — it leaves your inventory and physically appears as
+    // the real assembled model on its own pedestal on the product line.
+    renderInventory();
+    placeCompletedAssembly(kit).then(() => {
+      showCombineMsg(`${kit.name} fully assembled! ✅ — see it on the product line.`);
+    });
+  } else {
+    inventory.push({ uid: uid++, kitId: a.kitId, kitName: a.kitName, color: a.color, partIds: mergedIds, selected: false });
+    renderInventory();
+  }
 });
 
 async function dropItem(item) {
@@ -818,18 +995,50 @@ inspectScene.add(inspectKeyLight);
 const orbit = new OrbitControls(inspectCamera, inspectRenderer.domElement);
 orbit.enableDamping = true;
 
+/* Approximates center of mass by averaging every vertex position
+   (assuming roughly uniform density) — a better pivot for lopsided
+   assemblies than a bounding-box midpoint, which skews toward
+   whichever side has more empty space. */
+function computeCentroid(object) {
+  const v = new THREE.Vector3();
+  const sum = new THREE.Vector3();
+  let count = 0;
+  object.updateMatrixWorld(true);
+  object.traverse(o => {
+    if (o.isMesh && o.geometry && o.geometry.attributes && o.geometry.attributes.position) {
+      const posAttr = o.geometry.attributes.position;
+      for (let i = 0; i < posAttr.count; i++) {
+        v.fromBufferAttribute(posAttr, i).applyMatrix4(o.matrixWorld);
+        sum.add(v);
+        count++;
+      }
+    }
+  });
+  if (count === 0) return new THREE.Box3().setFromObject(object).getCenter(new THREE.Vector3());
+  sum.divideScalar(count);
+  return object.worldToLocal(sum.clone());
+}
+
 let currentInspectObj = null;
 async function openInspect(item) {
   if (currentInspectObj) inspectScene.remove(currentInspectObj);
   const kit = KITS.find(k => k.id === item.kitId);
   currentInspectObj = await buildKitObject(kit, item.partIds);
+
+  // Center on the piece's center of mass rather than its bounding-box
+  // midpoint, then reset the orbit camera fresh for every inspect so it
+  // always starts framed the same way regardless of the previous session.
+  const centroid = computeCentroid(currentInspectObj);
+  currentInspectObj.position.sub(centroid);
   const box = new THREE.Box3().setFromObject(currentInspectObj);
-  const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3()).length() || 1;
-  currentInspectObj.position.sub(center);
   const scale = 1.6 / size;
   currentInspectObj.scale.setScalar(scale);
   inspectScene.add(currentInspectObj);
+
+  orbit.target.set(0, 0, 0);
+  inspectCamera.position.set(1.4, 1.1, 1.6);
+  orbit.update();
 
   const info = itemLabel(item);
   inspectTitle.textContent = info.name;
