@@ -537,19 +537,34 @@ function currentSlide(el, index) {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function() {
+    // 1. Initialize all carousels and attach hover event listeners
     document.querySelectorAll('.carousel-container').forEach(container => {
         showSlide(container, 0);
         resetTimer(container);
+
+        // Pause auto-advance on mouse hover
+        container.addEventListener('mouseenter', () => {
+            const state = carouselState.get(container);
+            if (state && state.timer) {
+                clearInterval(state.timer);
+            }
+        });
+
+        // Resume auto-advance when mouse leaves
+        container.addEventListener('mouseleave', () => {
+            resetTimer(container);
+        });
     });
 
-    // Listen for video ending to move to the next slide automatically
-    const gazeboVid = document.getElementById('gazebo-video');
-    if (gazeboVid) {
-        gazeboVid.addEventListener('ended', () => {
-            const container = gazeboVid.closest('.carousel-container');
-            moveSlide(container, 1);
+    // 2. Automatically advance slides when any video finishes playing
+    document.querySelectorAll('.carousel-container video').forEach(vid => {
+        vid.addEventListener('ended', () => {
+            const container = vid.closest('.carousel-container');
+            if (container) {
+                moveSlide(container, 1);
+            }
         });
-    }
+    });
 });
     </script>
   
