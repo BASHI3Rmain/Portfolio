@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.5532487845678895,
+                -0.48658539529657385,
+                -0.6761290079993835,
+                0.0,
+                -0.752788619754279,
+                0.055501155778430046,
+                -0.6559183757722498,
+                0.0,
+                0.356686243556716,
+                0.8718682668794269,
+                -0.3355900011413684,
+                0.0,
+                0.2254944777721471,
+                0.555871258679343,
+                -0.21216413237749654,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Projector Slider"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.1232966286678367,
+                "ymag": 0.09527466760696471,
+                "zfar": 0.7873465872599117,
+                "znear": 0.5541503850282536
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 3654,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1711
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1712,
+            "type": "VEC3",
+            "min": [
+                -0.05079999938607216,
+                0.0,
+                -0.05841999873518944
+            ],
+            "max": [
+                0.05079999938607216,
+                0.009906000457704067,
+                0.05841999873518944
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1712,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 14616,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 14616,
+            "byteLength": 20544,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 35160,
+            "byteLength": 20544,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Projector Slider.bin",
+            "byteLength": 55704
+        }
+    ]
+}

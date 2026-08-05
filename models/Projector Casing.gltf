@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.5914897680264496,
+                0.1514939190096895,
+                0.7919529322018464,
+                0.0,
+                -0.04790169555245436,
+                -0.9738541103936111,
+                0.22206665493195551,
+                0.0,
+                0.8048883661000553,
+                -0.1692860424623184,
+                -0.5687679262618712,
+                0.0,
+                0.9036729066920314,
+                -0.23705264284269836,
+                -0.6329423492622189,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Projector Casing"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.18791153489697437,
+                "ymag": 0.14520436787493474,
+                "zfar": 1.4675472928319255,
+                "znear": 0.9503224557626982
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 19638,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                8903
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 8904,
+            "type": "VEC3",
+            "min": [
+                -0.1312464475631714,
+                -0.1066799983382225,
+                -0.08889999985694885
+            ],
+            "max": [
+                0.1312464475631714,
+                0.01269999984651804,
+                0.10016176849603653
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 8904,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 78552,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 78552,
+            "byteLength": 106848,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 185400,
+            "byteLength": 106848,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Projector Casing.bin",
+            "byteLength": 292248
+        }
+    ]
+}

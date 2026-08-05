@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.07200817955015881,
+                0.23734543781462733,
+                0.9687527884999635,
+                0.0,
+                0.3556422340164519,
+                0.9013218680056795,
+                -0.24725996772332492,
+                0.0,
+                -0.9318440982598213,
+                0.362334146063182,
+                -0.019507514834169397,
+                0.0,
+                -0.1409014577880283,
+                0.05928750091568134,
+                -0.0029496750401595217,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "CLAMP SCREW CAP"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.03968370908856939,
+                "ymag": 0.03066468429571271,
+                "zfar": 0.17403253948582723,
+                "znear": 0.13979440285428724
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 3600,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1531
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1532,
+            "type": "VEC3",
+            "min": [
+                -0.007996486499905586,
+                0.003000000026077032,
+                -0.007985949516296387
+            ],
+            "max": [
+                0.007996486499905586,
+                0.006000000052154064,
+                0.00800000037997961
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1532,
+            "type": "VEC3",
+            "min": [
+                -0.9995608329772949,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                0.999997615814209,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 14400,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 14400,
+            "byteLength": 18384,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 32784,
+            "byteLength": 18384,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "CLAMP SCREW CAP.bin",
+            "byteLength": 51168
+        }
+    ]
+}

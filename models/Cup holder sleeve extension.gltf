@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.6319459300637755,
+                -0.2633281448610849,
+                -0.7289050895691767,
+                0.0,
+                -0.4711329820469265,
+                0.6162452023567899,
+                -0.6310907730269946,
+                0.0,
+                0.6153682269205978,
+                0.7422264739931193,
+                0.2653710734054132,
+                0.0,
+                0.26404250960921716,
+                0.35497491033499395,
+                0.11386555420693978,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Cup holder sleeve extension"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.1126128348710564,
+                "ymag": 0.08701900876399812,
+                "zfar": 0.5619469793935754,
+                "znear": 0.36264726790356844
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 1152,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                407
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 408,
+            "type": "VEC3",
+            "min": [
+                -0.03922983258962631,
+                0.0,
+                -0.039250001311302185
+            ],
+            "max": [
+                0.03922983258962631,
+                0.0729999989271164,
+                0.039250001311302185
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 408,
+            "type": "VEC3",
+            "min": [
+                -0.9994862079620361,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                0.9994862079620361,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 4608,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 4608,
+            "byteLength": 4896,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 9504,
+            "byteLength": 4896,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Cup holder sleeve extension.bin",
+            "byteLength": 14400
+        }
+    ]
+}

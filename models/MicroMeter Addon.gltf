@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.9079511627841957,
+                0.0,
+                0.4190759907210471,
+                0.0,
+                0.41904930205802515,
+                0.011285611663356064,
+                -0.9078933403291743,
+                0.0,
+                -0.004729528888713947,
+                0.9999363154568315,
+                0.010246784232475019,
+                0.0,
+                -0.002728693253742945,
+                0.1628133040606851,
+                0.0015787539770783265,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "MicroMeter Addon"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.04081011832425869,
+                "ymag": 0.031535091432381715,
+                "zfar": 0.18892437149429162,
+                "znear": 0.13664748845790545
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 2520,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1185
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1186,
+            "type": "VEC3",
+            "min": [
+                -0.012299999594688416,
+                0.0,
+                -0.010999999940395355
+            ],
+            "max": [
+                0.008299999870359898,
+                0.017500000074505806,
+                0.010999999940395355
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1186,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 10080,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 10080,
+            "byteLength": 14232,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 24312,
+            "byteLength": 14232,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "MicroMeter Addon.bin",
+            "byteLength": 38544
+        }
+    ]
+}

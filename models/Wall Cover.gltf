@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.7175364918165498,
+                0.013494895692623195,
+                0.6963901713133549,
+                0.0,
+                0.580043180095163,
+                0.5419347955379746,
+                -0.6081583565242724,
+                0.0,
+                -0.3856050986912503,
+                0.8403121831649585,
+                0.3810303697710358,
+                0.0,
+                -0.3849471385998183,
+                0.8388783538853455,
+                0.3880002155646054,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Wall Cover"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.27199426256821335,
+                "ymag": 0.21017738471180122,
+                "zfar": 1.1601655704946816,
+                "znear": 0.917357756538789
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 3954,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1827
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1828,
+            "type": "VEC3",
+            "min": [
+                -0.06500795483589172,
+                -0.04760805889964104,
+                -4.336808689942018e-19
+            ],
+            "max": [
+                0.06500795483589172,
+                0.04760805889964104,
+                0.015239999629557133
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1828,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 15816,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 15816,
+            "byteLength": 21936,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 37752,
+            "byteLength": 21936,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Wall Cover.bin",
+            "byteLength": 59688
+        }
+    ]
+}

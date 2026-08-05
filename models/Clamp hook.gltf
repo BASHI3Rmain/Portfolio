@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.5256715601688869,
+                -0.24540556945948425,
+                0.8145216493794838,
+                0.0,
+                0.3845209894929211,
+                0.9226345209626974,
+                0.029818607736091685,
+                0.0,
+                -0.7588234442009507,
+                0.2975258765321098,
+                0.5793663204957693,
+                0.0,
+                -0.4697339068372796,
+                0.17582483386397119,
+                0.4121273349931996,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Clamp hook"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.1464256315277548,
+                "ymag": 0.11314707890781053,
+                "zfar": 0.9764727301420276,
+                "znear": 0.5658307784371388
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 9408,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                4303
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 4304,
+            "type": "VEC3",
+            "min": [
+                -0.014000000432133675,
+                -0.08550000190734863,
+                -0.0949999988079071
+            ],
+            "max": [
+                0.14100000262260437,
+                0.01899999938905239,
+                0.10499999672174454
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 4304,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 37632,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 37632,
+            "byteLength": 51648,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 89280,
+            "byteLength": 51648,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Clamp hook.bin",
+            "byteLength": 140928
+        }
+    ]
+}

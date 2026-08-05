@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                -0.7810607503530137,
+                0.34229408272850087,
+                0.5222823615507627,
+                0.0,
+                0.3083710179486143,
+                0.9387095130268264,
+                -0.15405117799703427,
+                0.0,
+                -0.5430022279395571,
+                0.04073341480888564,
+                -0.83874273133702,
+                0.0,
+                -0.26630418006409373,
+                0.0699768584247826,
+                -0.41134397588197336,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Clamp Anchor"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.1210737187693938,
+                "ymag": 0.09355696450362247,
+                "zfar": 0.5914243079791113,
+                "znear": 0.4399317339036801
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 4980,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1999
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 2000,
+            "type": "VEC3",
+            "min": [
+                -0.004999999888241291,
+                0.0,
+                -0.004999999888241291
+            ],
+            "max": [
+                0.004999999888241291,
+                0.10000000149011612,
+                0.004999999888241291
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 2000,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 19920,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 19920,
+            "byteLength": 24000,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 43920,
+            "byteLength": 24000,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Clamp Anchor.bin",
+            "byteLength": 67920
+        }
+    ]
+}

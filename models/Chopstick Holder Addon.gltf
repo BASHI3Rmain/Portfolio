@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.8628311357754127,
+                -0.05462719672423446,
+                -0.502531890047351,
+                0.0,
+                -0.06705419688053284,
+                0.9729891863553236,
+                -0.22089766389962562,
+                0.0,
+                0.5010251149565438,
+                0.2242942545266308,
+                0.8358623819559803,
+                0.0,
+                0.10334776999786366,
+                0.052580907360033936,
+                0.1522215566052208,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Chopstick Holder Addon"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.04754516500652648,
+                "ymag": 0.03673944568686137,
+                "zfar": 0.23890952798986595,
+                "znear": 0.15371500633677795
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 13296,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                5571
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 5572,
+            "type": "VEC3",
+            "min": [
+                -0.011300000362098217,
+                -1.4094628242311558e-18,
+                -0.010999999940395355
+            ],
+            "max": [
+                0.03550898656249046,
+                0.023467935621738434,
+                0.010999999940395355
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 5572,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 53184,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 53184,
+            "byteLength": 66864,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 120048,
+            "byteLength": 66864,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Chopstick Holder Addon.bin",
+            "byteLength": 186912
+        }
+    ]
+}

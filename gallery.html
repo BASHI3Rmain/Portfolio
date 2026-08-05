@@ -211,7 +211,7 @@ dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
-async function loadModel(path) {
+async function loadGLTF(path) {
   // Fetch the raw .gltf JSON ourselves (instead of gltfLoader.loadAsync,
   // which fetches the buffer URI exactly as written in the file) so we can
   // patch two common export quirks before parsing:
@@ -259,6 +259,20 @@ async function loadModel(path) {
   return gltf.scene;
 }
 
+/* .glb is a single self-contained binary file — the buffer is embedded
+   inside it, so the "data.bin" renaming problem that .gltf+.bin pairs hit
+   doesn't apply here. Load it directly; if it does carry its own textures
+   they're kept as-is (only the .gltf path forces the grey placeholder
+   material, since that's the one built from JSON we're already rewriting). */
+async function loadGLB(path) {
+  const gltf = await gltfLoader.loadAsync(path);
+  return gltf.scene;
+}
+
+async function loadModel(path) {
+  return /\.glb$/i.test(path) ? loadGLB(path) : loadGLTF(path);
+}
+
 /* Loading + patching a .gltf is relatively expensive (fetch, JSON patch,
    parse) and the same part gets displayed on its pedestal, re-shown in
    combine previews, inspected, and thumbnail-rendered — so cache the
@@ -278,8 +292,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
    ========================================================= */
 const canvasWrap = document.getElementById('canvas-wrap');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b0c10);
-scene.fog = new THREE.Fog(0x0b0c10, 8, 30);
+scene.background = new THREE.Color(0xdfe3e8);
+scene.fog = new THREE.Fog(0xdfe3e8, 22, 55);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 100);
 camera.position.set(0, 1.7, 9);
@@ -288,6 +302,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 canvasWrap.appendChild(renderer.domElement);
 
 window.addEventListener('resize', () => {
@@ -296,25 +311,29 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-scene.add(new THREE.AmbientLight(0x404050, 0.9));
-scene.add(new THREE.HemisphereLight(0x556677, 0x111114, 0.6));
+scene.add(new THREE.AmbientLight(0xffffff, 1.35));
+scene.add(new THREE.HemisphereLight(0xf4f6fa, 0xb9bcc4, 1.0));
+const sunLight = new THREE.DirectionalLight(0xffffff, 0.7);
+sunLight.position.set(10, 18, 6);
+scene.add(sunLight);
 
 /* =========================================================
    ROOM
    ========================================================= */
 const ROOM_W = 34, ROOM_D = 30, ROOM_H = 5;
 
-const floorMat = new THREE.MeshStandardMaterial({ color: 0x1b1c20, roughness: 0.85, metalness: 0.1 });
+const floorMat = new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.75, metalness: 0.05 });
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), floorMat);
 floor.rotation.x = -Math.PI/2;
 floor.receiveShadow = true;
 scene.add(floor);
 
-const wallMat = new THREE.MeshStandardMaterial({ color: 0x232530, roughness: 0.95 });
+const wallMat = new THREE.MeshStandardMaterial({ color: 0xf2f1ec, roughness: 0.9 });
 function makeWall(w, h, x, y, z, ry) {
   const wall = new THREE.Mesh(new THREE.PlaneGeometry(w, h), wallMat);
   wall.position.set(x, y, z);
   wall.rotation.y = ry;
+  wall.receiveShadow = true;
   scene.add(wall);
 }
 makeWall(ROOM_W, ROOM_H, 0, ROOM_H/2, -ROOM_D/2, 0);
@@ -322,7 +341,7 @@ makeWall(ROOM_W, ROOM_H, 0, ROOM_H/2, ROOM_D/2, Math.PI);
 makeWall(ROOM_D, ROOM_H, -ROOM_W/2, ROOM_H/2, 0, Math.PI/2);
 makeWall(ROOM_D, ROOM_H, ROOM_W/2, ROOM_H/2, 0, -Math.PI/2);
 
-const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), new THREE.MeshStandardMaterial({ color: 0x14151a }));
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), new THREE.MeshStandardMaterial({ color: 0xf7f7f5 }));
 ceiling.position.y = ROOM_H;
 ceiling.rotation.x = Math.PI/2;
 scene.add(ceiling);
@@ -385,6 +404,13 @@ const KITS = [
     meta: 'Drone Project',
     color: '#4d9fff',
     finalAssemblyPath: 'models/carepackagedroneassembly.gltf',
+    // Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [],
     parts: [
       { 
         id: 'carepackage_screw', 
@@ -471,6 +497,71 @@ function makePlaque(text1, text2, x, y, z, faceZ) {
   plaque.position.set(x, y, z);
   plaque.rotation.y = faceZ >= 0 ? 0 : Math.PI;
   scene.add(plaque);
+}
+
+/* =========================================================
+   WALL MEDIA — optional photos/videos mounted on the nearest
+   wall like gallery wall art. Populate a kit's `wallMedia`
+   array to use it, e.g.:
+     wallMedia: [
+       { type: 'image', src: 'images/carepackage-build1.jpg', caption: 'Prototype build' },
+       { type: 'video', src: 'images/carepackage-test.mp4' },
+     ]
+   Shown once behind a kit's completed assembly (see
+   placeCompletedAssembly below) rather than the parts station,
+   since "the final item" is what these are meant to showcase.
+   ========================================================= */
+function nearestWallPoint(cx, cz) {
+  const dx = cx || 0.0001, dz = cz || 0.0001;
+  const tX = (dx > 0 ? (ROOM_W/2 - 0.05) : (-ROOM_W/2 + 0.05)) / dx;
+  const tZ = (dz > 0 ? (ROOM_D/2 - 0.05) : (-ROOM_D/2 + 0.05)) / dz;
+  const alongX = Math.abs(tX) < Math.abs(tZ);
+  const t = alongX ? Math.abs(tX) : Math.abs(tZ);
+  return { x: dx * t, z: dz * t, alongX };
+}
+
+function addWallMedia(media, cx, cz) {
+  if (!media || !media.length) return;
+  const wall = nearestWallPoint(cx, cz);
+  const inward = new THREE.Vector3(-wall.x, 0, -wall.z).normalize();
+  const faceAngle = Math.atan2(inward.x, inward.z);
+  const along = wall.alongX ? new THREE.Vector3(0,0,1) : new THREE.Vector3(1,0,0);
+  const spacing = 1.6;
+  const startOffset = -((media.length - 1) * spacing) / 2;
+
+  media.forEach((m, i) => {
+    const offset = startOffset + i * spacing;
+    const px = wall.x + along.x * offset;
+    const pz = wall.z + along.z * offset;
+    const py = ROOM_H - 1.3;
+
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), new THREE.MeshStandardMaterial({ color: 0x1c1e24 }));
+    frame.position.set(px + inward.x*0.02, py, pz + inward.z*0.02);
+    frame.rotation.y = faceAngle;
+    scene.add(frame);
+
+    let mat;
+    if (m.type === 'video') {
+      const video = document.createElement('video');
+      video.src = m.src; video.loop = true; video.muted = true; video.playsInline = true; video.autoplay = true;
+      video.play().catch(() => {});
+      mat = new THREE.MeshBasicMaterial({ map: new THREE.VideoTexture(video) });
+    } else {
+      const tex = new THREE.TextureLoader().load(m.src);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      mat = new THREE.MeshBasicMaterial({ map: tex });
+    }
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(1.36, 0.86), mat);
+    pic.position.set(px + inward.x*0.03, py, pz + inward.z*0.03);
+    pic.rotation.y = faceAngle;
+    scene.add(pic);
+    if (m.caption) makePlaque(m.caption, '', px, py - 0.62, pz + inward.z*0.03, inward.z >= 0 ? 1 : -1);
+
+    const picLight = new THREE.SpotLight(0xffffff, 10, 4, Math.PI/6, 0.6, 1.5);
+    picLight.position.set(px + inward.x*1.2, py + 0.8, pz + inward.z*1.2);
+    picLight.target.position.set(px, py, pz);
+    scene.add(picLight); scene.add(picLight.target);
+  });
 }
 
 /* A visible red wireframe stand-in shown if a part's model file
@@ -856,6 +947,7 @@ async function placeCompletedAssembly(kit) {
   stand.castShadow = true; stand.receiveShadow = true;
   scene.add(stand);
   makePlaque(`${kit.name} ✅`, 'Completed Assembly', x, STAND_HEIGHT + 0.18, z + 0.32, 1);
+  addWallMedia(kit.wallMedia, x, z);
 
   const spot = new THREE.SpotLight(0xfff2dd, 35, 12, Math.PI/4, 0.5, 1.5);
   spot.position.set(x, ROOM_H - 0.2, z);

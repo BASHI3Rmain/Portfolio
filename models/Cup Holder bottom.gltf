@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.5930353872718879,
+                0.12267121931857689,
+                0.7957768540201303,
+                0.0,
+                -0.234222788569909,
+                -0.9193028321464379,
+                0.3162625303795473,
+                0.0,
+                0.7703562258837257,
+                -0.37394394601120634,
+                -0.5164467160160381,
+                0.0,
+                0.40519850528346935,
+                -0.1496902101813031,
+                -0.2716450264917357,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "Cup Holder bottom"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.1324906090609591,
+                "ymag": 0.10237910700165022,
+                "zfar": 0.6741708065876207,
+                "znear": 0.45189732638811503
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 16152,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                7199
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 7200,
+            "type": "VEC3",
+            "min": [
+                -0.04050000011920929,
+                0.0,
+                -0.04050000011920929
+            ],
+            "max": [
+                0.04050000011920929,
+                0.09399999678134918,
+                0.04050000011920929
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 7200,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 64608,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 64608,
+            "byteLength": 86400,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 151008,
+            "byteLength": 86400,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "Cup Holder bottom.bin",
+            "byteLength": 237408
+        }
+    ]
+}

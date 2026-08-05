@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.7286300748547303,
+                0.6796411700569616,
+                0.08477083213461077,
+                0.0,
+                -0.06610401424681571,
+                0.19297513499591815,
+                -0.9789743901521449,
+                0.0,
+                -0.681709962753697,
+                0.7077064908822805,
+                0.1855344966453454,
+                0.0,
+                -0.03376412781673276,
+                0.04505169899286607,
+                0.009189260538076947,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "clamp pin"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.011892953096415797,
+                "ymag": 0.009190009210866752,
+                "zfar": 0.07064918809044475,
+                "znear": 0.038968279012578946
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 480,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                217
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 218,
+            "type": "VEC3",
+            "min": [
+                -0.002400000113993883,
+                0.0,
+                -0.002400000113993883
+            ],
+            "max": [
+                0.002400000113993883,
+                0.019999999552965164,
+                0.002400000113993883
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 218,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 1920,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 1920,
+            "byteLength": 2616,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 4536,
+            "byteLength": 2616,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "clamp pin.bin",
+            "byteLength": 7152
+        }
+    ]
+}

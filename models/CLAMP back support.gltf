@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                -0.8789600269246072,
+                0.0886014640585033,
+                -0.4685926286609552,
+                0.0,
+                0.1781189630438929,
+                -0.8504890985441581,
+                -0.4949160820398885,
+                0.0,
+                -0.44238321178912565,
+                -0.5184766859023029,
+                0.7317643200531867,
+                0.0,
+                -0.0535729721756896,
+                -0.0677879547129562,
+                0.08861726329718471,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "CLAMP back support"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.02809324376101587,
+                "ymag": 0.021708415633512262,
+                "zfar": 0.152660293268086,
+                "znear": 0.1053210917539075
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 7626,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                3313
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 3314,
+            "type": "VEC3",
+            "min": [
+                -0.00799553282558918,
+                -0.01600000075995922,
+                -0.007982134819030762
+            ],
+            "max": [
+                0.00799553282558918,
+                0.006000000052154064,
+                0.00800000037997961
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 3314,
+            "type": "VEC3",
+            "min": [
+                -0.9994415640830994,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                0.9994415640830994,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 30504,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 30504,
+            "byteLength": 39768,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 70272,
+            "byteLength": 39768,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "CLAMP back support.bin",
+            "byteLength": 110040
+        }
+    ]
+}

@@ -1,0 +1,162 @@
+{
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.9763790075584707,
+                -0.007314405748978611,
+                -0.2159410407210152,
+                0.0,
+                -0.09314405674712005,
+                0.8875413321415757,
+                -0.45121454811768474,
+                0.0,
+                0.19495696523034287,
+                0.46067003723803923,
+                0.8658954316193604,
+                0.0,
+                0.041603382192940505,
+                0.11178182384272807,
+                0.19366309584994806,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "USB Holder Addon"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.0592395388652325,
+                "ymag": 0.04577600730495238,
+                "zfar": 0.25850770251977023,
+                "znear": 0.20623081948338406
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 4296,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                1951
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1952,
+            "type": "VEC3",
+            "min": [
+                -0.012299999594688416,
+                0.0,
+                -0.010999999940395355
+            ],
+            "max": [
+                0.008299999870359898,
+                0.017500000074505806,
+                0.010999999940395355
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 1952,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 17184,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 17184,
+            "byteLength": 23424,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 40608,
+            "byteLength": 23424,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "USB Holder Addon.bin",
+            "byteLength": 64032
+        }
+    ]
+}
