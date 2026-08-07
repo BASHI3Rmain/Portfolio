@@ -562,6 +562,16 @@ const pickables = []; // { object, kit, part, worldPos, taken }
 
 const STAND_RADIUS_TOP = 0.4, STAND_RADIUS_BOTTOM = 0.45, STAND_HEIGHT = 0.7;
 
+// Layout, matching the sketch: a row of assembly pillars along the back
+// wall, each with its parts piled in front of it, wall art/sign mounted
+// flush on the wall behind the pillars, player starts near the front.
+const ROW_SPACING = 7;
+const ASSEMBLY_Z = -ROOM_D/2 + 3.2;   // pillar row, close to the back wall
+const PARTS_Z = ASSEMBLY_Z + 5;        // parts pile sits in front of the pillars
+const WALL_Z = -ROOM_D/2 + 0.05;       // flush against the back wall
+const PHOTO_Y = 1.85;                   // roughly head height
+const SIGN_Y = ROOM_H - 0.9;
+
 function hashStr(s) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -591,44 +601,51 @@ function makePlaque(text1, text2, x, y, z, faceZ) {
 }
 
 /* =========================================================
-   WALL MEDIA — optional photos/videos mounted on the nearest
-   wall like gallery wall art. Populate a kit's `wallMedia`
-   array to use it, e.g.:
+   WALL MEDIA — photos/videos framed on the back wall behind
+   each kit's assembly pillar, like poster art in a gallery.
+   Populate a kit's `wallMedia` array to use it, e.g.:
      wallMedia: [
        { type: 'image', src: 'images/carepackage-build1.jpg', caption: 'Prototype build' },
        { type: 'video', src: 'images/carepackage-test.mp4' },
      ]
-   Shown once behind a kit's completed assembly (see
-   placeCompletedAssembly below) rather than the parts station,
-   since "the final item" is what these are meant to showcase.
+   Frames are portrait-oriented (phone photos), mounted flush
+   and dead straight on the back wall at roughly head height.
    ========================================================= */
-function nearestWallPoint(cx, cz) {
-  const dx = cx || 0.0001, dz = cz || 0.0001;
-  const tX = (dx > 0 ? (ROOM_W/2 - 0.05) : (-ROOM_W/2 + 0.05)) / dx;
-  const tZ = (dz > 0 ? (ROOM_D/2 - 0.05) : (-ROOM_D/2 + 0.05)) / dz;
-  const alongX = Math.abs(tX) < Math.abs(tZ);
-  const t = alongX ? Math.abs(tX) : Math.abs(tZ);
-  return { x: dx * t, z: dz * t, alongX };
+let _woodTexture = null;
+function woodMaterial() {
+  if (!_woodTexture) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128; canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#7a4a26'; ctx.fillRect(0, 0, 128, 128);
+    for (let i = 0; i < 22; i++) {
+      const y = (i / 22) * 128 + (Math.sin(i * 12.9) * 3);
+      ctx.strokeStyle = `rgba(${40+ (i%3)*15},${20+(i%4)*8},${8},${0.25 + (i%3)*0.1})`;
+      ctx.lineWidth = 1.5 + (i % 3);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(32, y+4, 96, y-4, 128, y); ctx.stroke();
+    }
+    _woodTexture = new THREE.CanvasTexture(canvas);
+    _woodTexture.wrapS = _woodTexture.wrapT = THREE.RepeatWrapping;
+  }
+  return new THREE.MeshStandardMaterial({ map: _woodTexture, color: 0xc79a6b, roughness: 0.75 });
 }
 
-function addWallMedia(media, cx, cz) {
+function addWallMedia(media, x) {
   if (!media || !media.length) return;
-  const wall = nearestWallPoint(cx, cz);
-  const inward = new THREE.Vector3(-wall.x, 0, -wall.z).normalize();
-  const faceAngle = Math.atan2(inward.x, inward.z);
-  const along = wall.alongX ? new THREE.Vector3(0,0,1) : new THREE.Vector3(1,0,0);
-  const spacing = 1.6;
+  const z = WALL_Z;
+  const py = PHOTO_Y;
+  const frameW = 0.62, frameH = 0.92; // portrait, phone-photo proportions
+  const border = 0.06;
+  const spacing = frameW + 0.35;
   const startOffset = -((media.length - 1) * spacing) / 2;
 
   media.forEach((m, i) => {
-    const offset = startOffset + i * spacing;
-    const px = wall.x + along.x * offset;
-    const pz = wall.z + along.z * offset;
-    const py = ROOM_H - 1.3;
+    const px = x + startOffset + i * spacing;
 
-    const frame = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), new THREE.MeshStandardMaterial({ color: 0x1c1e24 }));
-    frame.position.set(px + inward.x*0.02, py, pz + inward.z*0.02);
-    frame.rotation.y = faceAngle;
+    // Wooden frame, flush and dead straight on the wall (only ever
+    // rotated 180° depending on which wall it's on — never at an angle).
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(frameW + border*2, frameH + border*2), woodMaterial());
+    frame.position.set(px, py, z + 0.02);
     scene.add(frame);
 
     let mat;
@@ -642,17 +659,31 @@ function addWallMedia(media, cx, cz) {
       tex.colorSpace = THREE.SRGBColorSpace;
       mat = new THREE.MeshBasicMaterial({ map: tex });
     }
-    const pic = new THREE.Mesh(new THREE.PlaneGeometry(1.36, 0.86), mat);
-    pic.position.set(px + inward.x*0.03, py, pz + inward.z*0.03);
-    pic.rotation.y = faceAngle;
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(frameW, frameH), mat);
+    pic.position.set(px, py, z + 0.03);
     scene.add(pic);
-    if (m.caption) makePlaque(m.caption, '', px, py - 0.62, pz + inward.z*0.03, inward.z >= 0 ? 1 : -1);
+    if (m.caption) makePlaque(m.caption, '', px, py - frameH/2 - 0.18, z + 0.03, 1);
 
-    const picLight = new THREE.SpotLight(0xffffff, 10, 4, Math.PI/6, 0.6, 1.5);
-    picLight.position.set(px + inward.x*1.2, py + 0.8, pz + inward.z*1.2);
-    picLight.target.position.set(px, py, pz);
+    const picLight = new THREE.SpotLight(0xffffff, 9, 4, Math.PI/6, 0.6, 1.5);
+    picLight.position.set(px, py + 0.9, z + 1.4);
+    picLight.target.position.set(px, py, z);
     scene.add(picLight); scene.add(picLight.target);
   });
+}
+
+/* Large wall sign above the assembly row. */
+function makeSign(text, x, y, z, width) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024; canvas.height = 160;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#161616'; ctx.fillRect(0, 0, 1024, 160);
+  ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 6; ctx.strokeRect(10, 10, 1004, 140);
+  ctx.fillStyle = '#f2d98a'; ctx.font = 'bold 72px Segoe UI'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 512, 84);
+  const tex = new THREE.CanvasTexture(canvas);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(width, width * (160/1024)), new THREE.MeshBasicMaterial({ map: tex }));
+  sign.position.set(x, y, z);
+  scene.add(sign);
 }
 
 /* A visible red wireframe stand-in shown if a part's model file
@@ -665,20 +696,49 @@ function buildErrorPlaceholder() {
   );
 }
 
+const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.28, metalness: 0.85, emissive: 0x3a2600, emissiveIntensity: 0.4 });
+
+/* Reserves one physical gold pillar per kit for its finished assembly.
+   Always the SAME pillar/slot is reused — placeCompletedAssembly (further
+   down) only ever fills or empties this one slot, so repeatedly combining
+   and dropping a kit never spawns a duplicate pillar. */
+function buildAssemblyPillar(kit, x) {
+  const z = ASSEMBLY_Z;
+  const stand = new THREE.Mesh(new THREE.CylinderGeometry(STAND_RADIUS_TOP, STAND_RADIUS_BOTTOM, STAND_HEIGHT, 24), goldMat);
+  stand.position.set(x, STAND_HEIGHT/2, z);
+  stand.castShadow = true; stand.receiveShadow = true;
+  scene.add(stand);
+
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(STAND_RADIUS_TOP + 0.07, 0.03, 12, 32), goldMat);
+  ring.rotation.x = Math.PI/2;
+  ring.position.set(x, STAND_HEIGHT + 0.02, z);
+  scene.add(ring);
+
+  const spot = new THREE.SpotLight(0xffe9b0, 50, 13, Math.PI/4.5, 0.4, 1.3);
+  spot.position.set(x, ROOM_H - 0.2, z);
+  spot.target.position.set(x, 0.7, z);
+  scene.add(spot); scene.add(spot.target);
+
+  // Caption always faces +Z — the direction the player approaches from
+  // (spawn is at positive Z, looking toward the back wall at negative Z).
+  makePlaque(kit.name, 'Final Assembly', x, STAND_HEIGHT + 0.85, z + 0.32, 1);
+  addWallMedia(kit.wallMedia, x);
+
+  kit._assemblySlot = { x, z, worldY: STAND_HEIGHT + 0.15, mesh: null };
+}
+
 async function buildGalleryStations() {
+  const n = KITS.length;
+
   for (const [i, kit] of KITS.entries()) {
-    const angle = (i / KITS.length) * Math.PI * 2;
-    const radius = 9 + (KITS.length > 1 ? (mulberry32(hashStr(kit.id + '-station'))() - 0.5) * 2 : 0);
-    const cx = Math.sin(angle) * radius;
-    const cz = Math.cos(angle) * radius * 0.85 - 1;
-    const faceZ = cz >= 0 ? 1 : -1;
+    const cx = (i - (n - 1) / 2) * ROW_SPACING;
 
-    const spot = new THREE.SpotLight(0xfff2dd, 35, 12, Math.PI/4, 0.5, 1.5);
-    spot.position.set(cx, ROOM_H - 0.2, cz);
-    spot.target.position.set(cx, 0.6, cz);
+    buildAssemblyPillar(kit, cx);
+
+    const spot = new THREE.SpotLight(0xfff2dd, 32, 11, Math.PI/4, 0.5, 1.5);
+    spot.position.set(cx, ROOM_H - 0.2, PARTS_Z);
+    spot.target.position.set(cx, 0.6, PARTS_Z);
     scene.add(spot); scene.add(spot.target);
-
-    makePlaque(kit.name, kit.meta, cx, STAND_HEIGHT + 1.5, cz + faceZ*0.5, faceZ);
 
     // Every non-anchor part gets its own randomized (but stable) spot,
     // spread wide around the anchor piece so stands and plaques don't crowd.
@@ -688,25 +748,24 @@ async function buildGalleryStations() {
     for (const [j, part] of kit.parts.entries()) {
       let worldX, worldZ;
       if (j === 0) {
-        worldX = cx; worldZ = cz;
+        worldX = cx; worldZ = PARTS_Z;
       } else {
         const k = j - 1;
         const slotAngle = (k / subCount) * Math.PI * 2;
         const jitterAngle = (rng() - 0.5) * (Math.PI / subCount);
-        const spreadRadius = 2.6 + subCount * 0.3 + (rng() - 0.5) * 1.0; // wide + randomized
+        const spreadRadius = 1.7 + subCount * 0.28 + (rng() - 0.5) * 0.7;
         const a = slotAngle + jitterAngle;
         worldX = cx + Math.sin(a) * spreadRadius;
-        worldZ = cz + faceZ * (0.6 + Math.abs(Math.cos(a)) * spreadRadius * 0.6) * Math.sign(Math.cos(a) || 1);
+        worldZ = PARTS_Z + Math.cos(a) * spreadRadius * 0.55 + 0.4;
       }
 
       const stand = new THREE.Mesh(new THREE.CylinderGeometry(STAND_RADIUS_TOP, STAND_RADIUS_BOTTOM, STAND_HEIGHT, 24), pedestalMat);
       stand.position.set(worldX, STAND_HEIGHT/2, worldZ);
       stand.castShadow = true; stand.receiveShadow = true;
       scene.add(stand);
-      // Every part gets its own "Part Name / Kit Name" plaque, same as
-      // every other piece — no exceptions for whichever part happens to
-      // be the anchor (index 0).
-      makePlaque(part.name, kit.name, worldX, STAND_HEIGHT + 0.18, worldZ + faceZ*0.32, faceZ);
+      // Caption always faces +Z (toward the player), same as every other
+      // sign in the room — never mounted facing away from the approach side.
+      makePlaque(part.name, kit.name, worldX, STAND_HEIGHT + 0.18, worldZ + 0.32, 1);
 
       const worldY = STAND_HEIGHT + 0.15;
 
@@ -727,6 +786,9 @@ async function buildGalleryStations() {
       pickables.push({ mesh, kit, part, worldX, worldY, worldZ, taken: false });
     }
   }
+
+  const signWidth = Math.max(n * ROW_SPACING - 1.5, 5);
+  makeSign('FINAL ASSEMBLIES', 0, SIGN_Y, WALL_Z, signWidth);
 }
 
 buildGalleryStations().catch(err => console.error('Gallery station build failed:', err));
@@ -832,6 +894,12 @@ function tryPickup() {
   addToInventory(hovered.kit, hovered.part);
   scene.remove(hovered.mesh);
   hovered.taken = true;
+  // If this was a completed assembly sitting on its gold pillar, free the
+  // slot so the pillar reads as empty (and so a later drop or rebuild
+  // doesn't think it's still occupied).
+  if (hovered.kit._realKit && hovered.kit._realKit._assemblySlot) {
+    hovered.kit._realKit._assemblySlot.mesh = null;
+  }
   hovered = null;
   promptEl.style.display = 'none';
 }
@@ -1027,32 +1095,16 @@ slotsEl.addEventListener('change', e => {
 });
 
 /* =========================================================
-   COMPLETION LINE — finished assemblies don't sit in your
-   inventory forever; they "emerge" as the real assembled model
-   on their own pedestal in a dedicated row, lined up so future
-   completed kits join the same row.
+   COMPLETION — a finished assembly doesn't sit in your inventory
+   forever; it appears as the real assembled model on its own
+   reserved gold pillar (built once in buildAssemblyPillar). This
+   always fills/empties that SAME slot — repeatedly combining and
+   dropping a kit reuses it rather than spawning new pillars.
    ========================================================= */
-const COMPLETION_X0 = -4, COMPLETION_SPACING = 2.6, COMPLETION_Z = ROOM_D/2 - 3;
-let completedCount = 0;
-
 async function placeCompletedAssembly(kit) {
-  const idx = completedCount++;
-  const x = COMPLETION_X0 + idx * COMPLETION_SPACING;
-  const z = COMPLETION_Z;
+  const slot = kit._assemblySlot;
+  if (!slot || slot.mesh) return; // no reserved pillar, or already occupied
 
-  const stand = new THREE.Mesh(new THREE.CylinderGeometry(STAND_RADIUS_TOP, STAND_RADIUS_BOTTOM, STAND_HEIGHT, 24), pedestalMat);
-  stand.position.set(x, STAND_HEIGHT/2, z);
-  stand.castShadow = true; stand.receiveShadow = true;
-  scene.add(stand);
-  makePlaque(`${kit.name} ✅`, 'Completed Assembly', x, STAND_HEIGHT + 0.18, z + 0.32, 1);
-  addWallMedia(kit.wallMedia, x, z);
-
-  const spot = new THREE.SpotLight(0xfff2dd, 35, 12, Math.PI/4, 0.5, 1.5);
-  spot.position.set(x, ROOM_H - 0.2, z);
-  spot.target.position.set(x, 0.6, z);
-  scene.add(spot); scene.add(spot.target);
-
-  const worldY = STAND_HEIGHT + 0.15;
   let mesh;
   try {
     mesh = await loadModelCached(kit.finalAssemblyPath);
@@ -1061,20 +1113,24 @@ async function placeCompletedAssembly(kit) {
     console.error(`Failed to load completed assembly for ${kit.name}:`, err);
     mesh = buildErrorPlaceholder();
   }
-  mesh.position.set(x, worldY, z);
+  mesh.position.set(slot.x, slot.worldY, slot.z);
   mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
   scene.add(mesh);
+  slot.mesh = mesh;
 
-  // Register it as pickable too, using its own single-part pseudo-kit so
-  // it can be walked up to, inspected, downloaded, or dropped back here
-  // just like any other piece — it's just registered under a dedicated
-  // "-complete" kit id so it never gets mixed back into combine attempts.
-  const pseudoPart = { id: `${kit.id}-complete-part`, name: `${kit.name} (Complete)`,
-    local: () => loadModelCached(kit.finalAssemblyPath), assembled: { pos:[0,0,0], rot:[0,0,0] } };
-  const pseudoKit = { id: `${kit.id}-complete`, name: kit.name, meta: 'Completed Assembly', color: kit.color,
-    finalAssemblyPath: kit.finalAssemblyPath, parts: [pseudoPart] };
-  KITS.push(pseudoKit);
-  pickables.push({ mesh, kit: pseudoKit, part: pseudoPart, worldX: x, worldY, worldZ: z, taken: false });
+  // Register it as pickable too, using a single-part pseudo-kit so it can
+  // be walked up to, inspected, downloaded, or dropped just like any other
+  // piece. The pseudo-kit is created once and reused (never re-pushed into
+  // KITS on later completions), and links back to the real kit so dropping
+  // it knows to disassemble back into the original parts.
+  if (!kit._pseudoKit) {
+    const pseudoPart = { id: `${kit.id}-complete-part`, name: `${kit.name} (Complete)`,
+      local: () => loadModelCached(kit.finalAssemblyPath), assembled: { pos:[0,0,0], rot:[0,0,0] } };
+    kit._pseudoKit = { id: `${kit.id}-complete`, name: kit.name, meta: 'Completed Assembly', color: kit.color,
+      finalAssemblyPath: kit.finalAssemblyPath, parts: [pseudoPart], _realKit: kit };
+    KITS.push(kit._pseudoKit);
+  }
+  pickables.push({ mesh, kit: kit._pseudoKit, part: kit._pseudoKit.parts[0], worldX: slot.x, worldY: slot.worldY, worldZ: slot.z, taken: false });
 }
 
 function updateCombineBtn() {
