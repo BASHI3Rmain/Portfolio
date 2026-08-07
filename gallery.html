@@ -171,7 +171,7 @@
 
 <div id="topbar">
   <div class="brand">Bashar Shaaban <span>| 3D Gallery</span></div>
-  <a class="exit" href="projects.html">← Exit to Projects</a>
+  <a class="exit" id="exit-link" href="projects.html">← Exit to Projects</a>
 </div>
 <div id="canvas-wrap"></div>
 <div id="crosshair"></div>
@@ -648,6 +648,13 @@ const controls = new PointerLockControls(camera, renderer.domElement);
 const splash = document.getElementById('splash');
 const resumeHint = document.getElementById('resume-hint');
 const startBtn = document.getElementById('start-btn');
+document.getElementById('exit-link').addEventListener('click', (e) => {
+  // Browsers treat Alt+click on a link as "download this" — since holding
+  // Alt is now how you free the mouse, that collided with this button.
+  // Force a normal navigation regardless of which keys are held.
+  e.preventDefault();
+  window.location.href = e.currentTarget.href;
+});
 let hasEnteredOnce = false;
 let altHeld = false;
 
@@ -1121,11 +1128,14 @@ async function openInspect(item) {
   // midpoint, then reset the orbit camera fresh for every inspect so it
   // always starts framed the same way regardless of the previous session.
   const centroid = computeCentroid(currentInspectObj);
-  currentInspectObj.position.sub(centroid);
-  const box = new THREE.Box3().setFromObject(currentInspectObj);
+  const box = new THREE.Box3().setFromObject(currentInspectObj); // measured before any position/scale changes
   const size = box.getSize(new THREE.Vector3()).length() || 1;
   const scale = 1.6 / size;
   currentInspectObj.scale.setScalar(scale);
+  // Position is a translation applied on top of the object's own scale, not
+  // multiplied through it — so the offset has to be pre-scaled here too, or
+  // the centroid ends up anywhere but the origin once scale is applied.
+  currentInspectObj.position.copy(centroid).multiplyScalar(-scale);
   inspectScene.add(currentInspectObj);
 
   orbit.target.set(0, 0, 0);
@@ -1144,10 +1154,14 @@ function resizeInspect() {
   inspectCamera.aspect = w/h; inspectCamera.updateProjectionMatrix();
   inspectRenderer.setSize(w, h);
 }
-document.getElementById('inspect-close').addEventListener('click', () => {
+function closeInspect() {
   inspectEl.style.display = 'none';
   inspectOpen = false;
-  splash.style.display = 'flex';
+  controls.lock(); // drop straight back into the 3D space, not the splash
+}
+document.getElementById('inspect-close').addEventListener('click', closeInspect);
+document.addEventListener('keydown', e => {
+  if (e.code === 'Escape' && inspectOpen) closeInspect();
 });
 window.addEventListener('resize', resizeInspect);
 
