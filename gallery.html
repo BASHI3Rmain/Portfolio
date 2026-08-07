@@ -398,9 +398,55 @@ function buildSingleScrew() {
    ========================================================= */
 const KITS = [
   
+{id: 'AssemblyForHookClamp',
+    name: 'Hook Clamp Shelf',
+    meta: 'Shelf Proj',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Assembly for hook clamp.glb',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [],
+    parts: [
+      { 
+        id: 'Chopstick Addon', 
+        name: 'Chopstick Holder Addon', 
+        file: 'Chopstick Holder Addon.gltf', 
+        local: () => loadModelCached('models\Chopstick Holder Addon.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      {
+        id: 'Clamp Anchor', 
+        name: 'Clamp Attachment Rod', 
+        file: 'Clamp Anchor.gltf', 
+        local: () => loadModelCached('models\Clamp Anchor.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      {
+         id: 'Clamp Anchor', 
+        name: 'Clamp Attachment Rod', 
+        file: 'Clamp Anchor.gltf', 
+        local: () => loadModelCached('models\Clamp Anchor.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      {
+         id: 'CLAMP back support', 
+        name: 'Shelf Back Support', 
+        file: 'CLAMP back support.gltf', 
+        local: () => loadModelCached('models\CLAMP back support.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+        
+      }
+
+    ]
+},
+
   {
     id: 'carepackagedroneassembly',
-    name: 'Care Package Drone Addon',
+    name: 'Care Package Drone Attachment',
     meta: 'Drone Project',
     color: '#4d9fff',
     finalAssemblyPath: 'models/carepackagedroneassembly.gltf',
