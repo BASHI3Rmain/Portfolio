@@ -320,7 +320,7 @@ scene.add(sunLight);
 /* =========================================================
    ROOM
    ========================================================= */
-const ROOM_W = 34, ROOM_D = 30, ROOM_H = 5;
+const ROOM_W = 60, ROOM_D = 34, ROOM_H = 5;
 
 const floorMat = new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.75, metalness: 0.05 });
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), floorMat);
@@ -565,7 +565,7 @@ const STAND_RADIUS_TOP = 0.4, STAND_RADIUS_BOTTOM = 0.45, STAND_HEIGHT = 0.7;
 // Layout, matching the sketch: a row of assembly pillars along the back
 // wall, each with its parts piled in front of it, wall art/sign mounted
 // flush on the wall behind the pillars, player starts near the front.
-const ROW_SPACING = 7;
+const ROW_SPACING = 13;
 const ASSEMBLY_Z = -ROOM_D/2 + 3.2;   // pillar row, close to the back wall
 const PARTS_Z = ASSEMBLY_Z + 5;        // parts pile sits in front of the pillars
 const WALL_Z = -ROOM_D/2 + 0.05;       // flush against the back wall
@@ -587,14 +587,27 @@ function mulberry32(seed) {
 }
 
 function makePlaque(text1, text2, x, y, z, faceZ) {
+  const measureCanvas = document.createElement('canvas');
+  const mctx = measureCanvas.getContext('2d');
+  mctx.font = 'bold 20px Segoe UI';
+  const w1 = mctx.measureText(text1 || '').width;
+  mctx.font = '14px Segoe UI';
+  const w2 = mctx.measureText(text2 || '').width;
+  const padding = 20;
+  const canvasW = Math.min(Math.max(Math.max(w1, w2) + padding * 2, 220), 900);
+  const canvasH = 64;
+
   const canvas = document.createElement('canvas');
-  canvas.width = 256; canvas.height = 64;
+  canvas.width = canvasW; canvas.height = canvasH;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#111'; ctx.fillRect(0,0,256,64);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Segoe UI'; ctx.fillText(text1, 10, 26);
-  ctx.fillStyle = '#4d9fff'; ctx.font = '14px Segoe UI'; ctx.fillText(text2, 10, 48);
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasW, canvasH);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Segoe UI'; ctx.fillText(text1 || '', padding, 26);
+  ctx.fillStyle = '#4d9fff'; ctx.font = '14px Segoe UI'; ctx.fillText(text2 || '', padding, 48);
   const tex = new THREE.CanvasTexture(canvas);
-  const plaque = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.17), new THREE.MeshBasicMaterial({ map: tex }));
+  // Physical width scales with the canvas so longer captions get a wider
+  // sign instead of squeezed/clipped text — height (and font size) stays fixed.
+  const worldW = 0.7 * (canvasW / 256);
+  const plaque = new THREE.Mesh(new THREE.PlaneGeometry(worldW, 0.17), new THREE.MeshBasicMaterial({ map: tex }));
   plaque.position.set(x, y, z);
   plaque.rotation.y = faceZ >= 0 ? 0 : Math.PI;
   scene.add(plaque);
@@ -634,35 +647,53 @@ function addWallMedia(media, x) {
   if (!media || !media.length) return;
   const z = WALL_Z;
   const py = PHOTO_Y;
-  const frameW = 0.62, frameH = 0.92; // portrait, phone-photo proportions
+  const maxW = 0.85, maxH = 1.05; // envelope a portrait phone photo fits inside, uncropped
   const border = 0.06;
-  const spacing = frameW + 0.35;
-  const startOffset = -((media.length - 1) * spacing) / 2;
+  const slotSpacing = maxW + 0.4;
+  const startOffset = -((media.length - 1) * slotSpacing) / 2;
+
+  // Sizes the frame + photo to the image's real aspect ratio (like
+  // object-fit: contain) so nothing gets stretched or squashed, then
+  // replaces the placeholder geometry once the true size is known.
+  function fitToAspect(picMesh, frameMesh, natW, natH) {
+    let w = maxW, h = maxW * (natH / natW);
+    if (h > maxH) { h = maxH; w = maxH * (natW / natH); }
+    picMesh.geometry.dispose();
+    picMesh.geometry = new THREE.PlaneGeometry(w, h);
+    frameMesh.geometry.dispose();
+    frameMesh.geometry = new THREE.PlaneGeometry(w + border * 2, h + border * 2);
+  }
 
   media.forEach((m, i) => {
-    const px = x + startOffset + i * spacing;
+    const px = x + startOffset + i * slotSpacing;
 
-    // Wooden frame, flush and dead straight on the wall (only ever
-    // rotated 180° depending on which wall it's on — never at an angle).
-    const frame = new THREE.Mesh(new THREE.PlaneGeometry(frameW + border*2, frameH + border*2), woodMaterial());
+    // Wooden frame, flush and dead straight on the wall (always facing +Z —
+    // never mounted at an angle). Starts at the max envelope size and is
+    // resized to the real aspect ratio once the image/video loads.
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(maxW + border*2, maxH + border*2), woodMaterial());
     frame.position.set(px, py, z + 0.02);
     scene.add(frame);
 
-    let mat;
+    const pic = new THREE.Mesh(new THREE.PlaneGeometry(maxW, maxH), new THREE.MeshBasicMaterial({ color: 0x333333 }));
+    pic.position.set(px, py, z + 0.03);
+    scene.add(pic);
+
     if (m.type === 'video') {
       const video = document.createElement('video');
       video.src = m.src; video.loop = true; video.muted = true; video.playsInline = true; video.autoplay = true;
+      video.addEventListener('loadedmetadata', () => fitToAspect(pic, frame, video.videoWidth, video.videoHeight));
       video.play().catch(() => {});
-      mat = new THREE.MeshBasicMaterial({ map: new THREE.VideoTexture(video) });
+      pic.material.dispose();
+      pic.material = new THREE.MeshBasicMaterial({ map: new THREE.VideoTexture(video) });
     } else {
-      const tex = new THREE.TextureLoader().load(m.src);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      mat = new THREE.MeshBasicMaterial({ map: tex });
+      new THREE.TextureLoader().load(m.src, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        fitToAspect(pic, frame, tex.image.width, tex.image.height);
+        pic.material.dispose();
+        pic.material = new THREE.MeshBasicMaterial({ map: tex });
+      });
     }
-    const pic = new THREE.Mesh(new THREE.PlaneGeometry(frameW, frameH), mat);
-    pic.position.set(px, py, z + 0.03);
-    scene.add(pic);
-    if (m.caption) makePlaque(m.caption, '', px, py - frameH/2 - 0.18, z + 0.03, 1);
+    if (m.caption) makePlaque(m.caption, '', px, py - maxH/2 - 0.18, z + 0.03, 1);
 
     const picLight = new THREE.SpotLight(0xffffff, 9, 4, Math.PI/6, 0.6, 1.5);
     picLight.position.set(px, py + 0.9, z + 1.4);
@@ -753,7 +784,7 @@ async function buildGalleryStations() {
         const k = j - 1;
         const slotAngle = (k / subCount) * Math.PI * 2;
         const jitterAngle = (rng() - 0.5) * (Math.PI / subCount);
-        const spreadRadius = 1.7 + subCount * 0.28 + (rng() - 0.5) * 0.7;
+        const spreadRadius = Math.min(1.7 + subCount * 0.24, 4.4) + (rng() - 0.5) * 0.6;
         const a = slotAngle + jitterAngle;
         worldX = cx + Math.sin(a) * spreadRadius;
         worldZ = PARTS_Z + Math.cos(a) * spreadRadius * 0.55 + 0.4;
@@ -892,14 +923,18 @@ let hovered = null;
 function tryPickup() {
   if (!hovered || inventory.length >= 10) return;
   addToInventory(hovered.kit, hovered.part);
-  scene.remove(hovered.mesh);
-  hovered.taken = true;
-  // If this was a completed assembly sitting on its gold pillar, free the
-  // slot so the pillar reads as empty (and so a later drop or rebuild
-  // doesn't think it's still occupied).
-  if (hovered.kit._realKit && hovered.kit._realKit._assemblySlot) {
-    hovered.kit._realKit._assemblySlot.mesh = null;
+
+  if (hovered.kit._realKit) {
+    // The finished assembly is a single physical object on its gold pillar
+    // — taking it actually removes it and frees the slot for a future rebuild.
+    scene.remove(hovered.mesh);
+    hovered.taken = true;
+    if (hovered.kit._realKit._assemblySlot) hovered.kit._realKit._assemblySlot.mesh = null;
   }
+  // Regular parts are NOT removed from their pedestal — it's a dispenser,
+  // so you can always come back and grab another copy to inspect, combine,
+  // or download, even after fully assembling and dropping the finished item.
+
   hovered = null;
   promptEl.style.display = 'none';
 }
@@ -963,7 +998,9 @@ async function getAssemblyTransforms(kit) {
 async function buildKitObject(kit, partIds) {
   const transforms = await getAssemblyTransforms(kit);
   const g = new THREE.Group();
-  for (const p of kit.parts.filter(p => partIds.has(p.id))) {
+  const included = kit.parts.filter(p => partIds.has(p.id));
+  let idx = 0;
+  for (const p of included) {
     let mesh;
     try {
       mesh = await p.local();
@@ -977,10 +1014,17 @@ async function buildKitObject(kit, partIds) {
       mesh.position.copy(t.position);
       mesh.quaternion.copy(t.quaternion);
     } else {
+      // No matching node found in the real assembly file — use the manual
+      // fallback, nudged slightly per part so an unmatched kit (e.g. every
+      // part sharing the same placeholder offset) doesn't render as one
+      // overlapping blob. Check the console for "no assembly node matched"
+      // warnings to fix the real cause.
       mesh.position.set(...p.assembled.pos);
+      mesh.position.add(new THREE.Vector3((idx % 3) * 0.06, Math.floor(idx / 3) * 0.06, 0));
       mesh.rotation.set(...p.assembled.rot);
     }
     g.add(mesh);
+    idx++;
   }
   return g;
 }
@@ -1122,13 +1166,19 @@ async function placeCompletedAssembly(kit) {
   // be walked up to, inspected, downloaded, or dropped just like any other
   // piece. The pseudo-kit is created once and reused (never re-pushed into
   // KITS on later completions), and links back to the real kit so dropping
-  // it knows to disassemble back into the original parts.
+  // it knows to return it here rather than disappearing.
   if (!kit._pseudoKit) {
     const pseudoPart = { id: `${kit.id}-complete-part`, name: `${kit.name} (Complete)`,
       local: () => loadModelCached(kit.finalAssemblyPath), assembled: { pos:[0,0,0], rot:[0,0,0] } };
     kit._pseudoKit = { id: `${kit.id}-complete`, name: kit.name, meta: 'Completed Assembly', color: kit.color,
       finalAssemblyPath: kit.finalAssemblyPath, parts: [pseudoPart], _realKit: kit };
     KITS.push(kit._pseudoKit);
+  } else {
+    // Clear out the previous (now-stale, already-picked-up) pickable entry
+    // for this pseudo-kit so repeated combine/drop cycles don't quietly
+    // accumulate dead entries in the pickables array.
+    const staleIdx = pickables.findIndex(p => p.kit === kit._pseudoKit);
+    if (staleIdx !== -1) pickables.splice(staleIdx, 1);
   }
   pickables.push({ mesh, kit: kit._pseudoKit, part: kit._pseudoKit.parts[0], worldX: slot.x, worldY: slot.worldY, worldZ: slot.z, taken: false });
 }
@@ -1136,7 +1186,7 @@ async function placeCompletedAssembly(kit) {
 function updateCombineBtn() {
   const n = inventory.filter(i => i.selected).length;
   combineBtn.textContent = `Combine Selected (${n})`;
-  combineBtn.disabled = n !== 2;
+  combineBtn.disabled = n < 2;
 }
 
 function showCombineMsg(text) {
@@ -1146,31 +1196,38 @@ function showCombineMsg(text) {
   showCombineMsg._t = setTimeout(() => combineMsg.style.display = 'none', 2600);
 }
 
+// Combine as many selected items as you like at once (2 or more), as long
+// as they're all from the same project and don't share any pieces already.
 combineBtn.addEventListener('click', () => {
   const chosen = inventory.filter(i => i.selected);
-  if (chosen.length !== 2) return;
-  const [a, b] = chosen;
+  if (chosen.length < 2) return;
 
-  if (a.kitId !== b.kitId) {
-    showCombineMsg(`These pieces are from different projects — ${a.kitName} and ${b.kitName} don't fit together.`);
+  const kitId = chosen[0].kitId;
+  const mismatched = chosen.find(i => i.kitId !== kitId);
+  if (mismatched) {
+    showCombineMsg(`All selected pieces must be from the same project — ${chosen[0].kitName} and ${mismatched.kitName} don't fit together.`);
     return;
   }
-  const overlap = [...a.partIds].some(id => b.partIds.has(id));
-  if (overlap) { showCombineMsg('You already have both of those pieces together.'); return; }
+  const mergedIds = new Set();
+  for (const item of chosen) {
+    for (const pid of item.partIds) {
+      if (mergedIds.has(pid)) { showCombineMsg('You already have some of those pieces together.'); return; }
+      mergedIds.add(pid);
+    }
+  }
 
-  const mergedIds = new Set([...a.partIds, ...b.partIds]);
-  const kit = KITS.find(k => k.id === a.kitId);
+  const kit = KITS.find(k => k.id === kitId);
   inventory = inventory.filter(i => !i.selected);
 
   if (mergedIds.size === kit.parts.length) {
     // Full assembly — it leaves your inventory and physically appears as
-    // the real assembled model on its own pedestal on the product line.
+    // the real assembled model on its reserved gold pillar.
     renderInventory();
     placeCompletedAssembly(kit).then(() => {
-      showCombineMsg(`${kit.name} fully assembled! ✅ — see it on the product line.`);
+      showCombineMsg(`${kit.name} fully assembled! ✅ — see it on the final assembly line.`);
     });
   } else {
-    inventory.push({ uid: uid++, kitId: a.kitId, kitName: a.kitName, color: a.color, partIds: mergedIds, selected: false });
+    inventory.push({ uid: uid++, kitId, kitName: chosen[0].kitName, color: chosen[0].color, partIds: mergedIds, selected: false });
     renderInventory();
   }
 });
@@ -1178,34 +1235,30 @@ combineBtn.addEventListener('click', () => {
 async function dropItem(item) {
   inventory = inventory.filter(i => i.uid !== item.uid);
   const kit = KITS.find(k => k.id === item.kitId);
-  for (const partId of item.partIds) {
-    const slotInfo = pickables.find(p => p.kit.id === kit.id && p.part.id === partId && p.taken);
-    if (!slotInfo) continue;
-    let restored;
-    try {
-      restored = await slotInfo.part.local();
-      if (!restored) throw new Error('local() returned nothing');
-    } catch (err) {
-      console.error(`Failed to reload model for part "${slotInfo.part.name}":`, err);
-      restored = buildErrorPlaceholder();
-    }
-    restored.position.set(slotInfo.worldX, slotInfo.worldY, slotInfo.worldZ);
-    restored.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
-    scene.add(restored);
-    slotInfo.mesh = restored;
-    slotInfo.taken = false;
+
+  if (kit && kit._realKit) {
+    // Dropping a completed assembly places it back on its gold pillar.
+    // Regular parts are never removed from their own pedestals when
+    // picked up (see tryPickup), so there's nothing to restore for
+    // those — this just re-fills the one reserved completion slot,
+    // and placeCompletedAssembly's own guard means it's never duplicated.
+    await placeCompletedAssembly(kit._realKit);
   }
+  // Regular (non-completed) parts were never taken off their pedestal in
+  // the first place, so dropping one just removes your held copy.
   renderInventory();
 }
 
 function downloadItem(item) {
   const kit = KITS.find(k => k.id === item.kitId);
-  // Downloads the real STL file for every part in this slot (more than one
-  // file if this is a combined assembly) — assumes each STL lives at
-  // models/<part-id>.stl, matching the naming convention already used for
-  // the .gltf/.bin pairs. Rename the files in models/ if yours differ.
-  [...item.partIds].forEach((partId, i) => {
-    const part = kit.parts.find(p => p.id === partId);
+  // A completed assembly downloads the full original part set (not a
+  // "-complete" file that doesn't exist) — every .stl that makes up the kit.
+  const partIds = kit._realKit ? kit._realKit.parts.map(p => p.id) : [...item.partIds];
+  // Downloads the real STL file for every part in this slot — assumes each
+  // STL lives at models/<part-id>.stl, matching the naming convention
+  // already used for the .gltf/.bin pairs. Rename the files in models/ if
+  // yours differ.
+  partIds.forEach((partId, i) => {
     const url = `models/${partId}.stl`;
     // Stagger slightly so multi-part downloads don't get blocked as a popup burst.
     setTimeout(() => {
