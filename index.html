@@ -105,6 +105,9 @@
 .profile-image-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
     margin: 20px 0 30px 0; /* Clean breathing room below heading and above text */
 }
 
@@ -116,6 +119,40 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow lift */
     border: 4px solid #fff;
     outline: 1px solid #ccc; /* Crisp clean border frame */
+}
+
+/* Spotify "Now Playing" card */
+.spotify-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.spotify-now-playing img {
+    display: block;
+    max-width: 300px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.spotify-jam-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #1DB954; /* Spotify green */
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 8px 18px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease;
+}
+
+.spotify-jam-btn:hover {
+    background-color: #169c46;
 }
     </style>
 </head>
@@ -138,6 +175,33 @@
         <section id="about">
             <h2>About Me</h2>
             <div class="profile-image-container">
+                <!--
+                  SPOTIFY "NOW PLAYING" — powered by spotify-github-profile
+                  (https://github.com/kittinan/spotify-github-profile), a free
+                  hosted service that keeps your Spotify login server-side so
+                  no secrets ever sit in this HTML file.
+
+                  ONE-TIME SETUP:
+                  1. Go to https://spotify-github-profile.kittinanx.com/api/login
+                     and click "Connect with Spotify" to authorize.
+                  2. After authorizing you'll be given a UID — copy it.
+                  3. Replace YOUR_SPOTIFY_UID below with that UID.
+                  The image then updates live on its own — nothing else to do.
+                -->
+                <div class="spotify-card">
+                    <a class="spotify-now-playing" href="https://open.spotify.com/user/bashi3r" target="_blank" rel="noopener">
+                        <img src="https://spotify-github-profile.kittinanx.com/api/view?uid=bashi3r&cover_image=true&theme=novatorem&show_offline=true&background_color=fafafa&bar_color=0056b3" alt="Bashar's Spotify — now playing">
+                    </a>
+                    <!--
+                      JOIN MY JAM — Spotify doesn't expose a public API for
+                      Jam (its real-time listen-together feature), so this
+                      can't auto-update like the badge above. Whenever you
+                      start a Jam, open the Spotify app, generate its invite
+                      link, and paste it in as this href. Leave it pointing
+                      at your profile the rest of the time.
+                    -->
+                    <a class="spotify-jam-btn" href="https://open.spotify.com/user/bashi3r" target="_blank" rel="noopener">🎧 Join My Jam</a>
+                </div>
                 <img src="profile.jpg" alt="Bashar Shaaban" class="centered-profile-photo">
             </div>
             <div class="about-content">
