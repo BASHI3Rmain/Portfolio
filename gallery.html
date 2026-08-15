@@ -501,7 +501,10 @@ const KITS = [
     //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
     //   { type: 'video', src: 'images/carepackage-test.mp4' },
     // ],
-    wallMedia: [],
+    wallMedia: [{ type: 'image', src: 'images/Drone Harness.jpg', caption: 'Drone Harness' },
+      { type: 'image', src: 'images/Drone Cargo.jpg', caption: 'Drone Cargo' }
+    ,{ type: 'image', src: 'images/Complete Drone Care Package.jpg', caption: 'Complete Drone Care Package' },
+     ],
     parts: [
       { 
         id: 'carepackage_screw', 
@@ -546,10 +549,134 @@ const KITS = [
         assembled: { pos: [0, 0.4, 0], rot: [0, 0, 0] } 
       }
   ]
+}, {id: 'Charm Stand',
+    name: 'Charm Stand',
+    meta: 'Decorative',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Charm Stand.gltf',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [{ type: 'image', src: 'images/Charm Stand1.jpg', caption: 'Decorative Charm Stand Ex1' },
+      { type: 'image', src: 'images/Charm Stand2.jpg', caption: 'Decorative Charm Stand Ex2' }
+    ],
+    parts: [ ]
 },
+{id: 'Coaster Holder',
+    name: 'Coaster Holder',
+    meta: 'Decorative',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Coaster Holder.gltf',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [{ type: 'image', src: 'images/Coaster Holder.jpg', caption: 'Coaster Holder' },
+      
+    ],
+    parts: [
+      
  
-];
+]
+},
+{id: 'Wall Cover',
+    name: 'Wall Cover',
+    meta: 'Decorative',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Wall Cover.gltf',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [{ type: 'image', src: 'images/Wall Cover Before.jpg', caption: 'Wall Hole' },
+    { type: 'image', src: 'images/Wall Cover After.jpg', caption: 'Wall Cover Application' }
+      
+    ],
+    parts: [
+   
+ 
+]
+},
+{id: 'Projector Assembly',
+    name: 'Projector Assembly',
+    meta: 'Theatre',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Projector Assembly.glb',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [
+    ],
+    parts: [
+      { 
+        id: 'Projector Casing', 
+        name: 'Projector Casing', 
+        file: 'Projector Casing.gltf', 
+        local: () => loadModelCached('models/Projector Casing.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      { 
+        id: 'Projector Slider', 
+        name: 'Projector Slider', 
+        file: 'Projector Slider.gltf', 
+        local: () => loadModelCached('models/Projector Slider.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      }
 
+ 
+]
+},
+{id: 'Thermos Holder',
+    name: 'Thermos Holder',
+    meta: 'Functional',
+    color: '#4d9fff',
+    finalAssemblyPath: 'models/Cup Holder Assembly.glb',
+// Add photos/videos of the real build here — they'll appear framed on
+    // the wall behind this kit's completed-assembly stand once combined:
+    // wallMedia: [
+    //   { type: 'image', src: 'images/carepackage-1.jpg', caption: 'Prototype build' },
+    //   { type: 'video', src: 'images/carepackage-test.mp4' },
+    // ],
+    wallMedia: [{ type: 'image', src: 'images/Cup Holder Disassembled.jpg', caption: 'Cup Holder Disassembled' },
+    { type: 'image', src: 'images/Cup Holder Assembled.jpg', caption: 'Cup Holder In Use' }
+      
+    ],
+    parts: [
+      { 
+        id: 'Cup Holder bottom', 
+        name: 'Cup Holder Shaft', 
+        file: 'Cup Holder bottom.gltf', 
+        local: () => loadModelCached('models/Cup Holder bottom.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      { 
+        id: 'Cup Holder top', 
+        name: 'Cup Holder Head', 
+        file: 'Cup Holder TOP.gltf', 
+        local: () => loadModelCached('models/Cup Holder TOP.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      },
+      { 
+        id: 'Cup Holder sleeve extension', 
+        name: 'Cup Holder Sleeve Extension', 
+        file: 'Cup holder sleeve extension.gltf', 
+        local: () => loadModelCached('models/Cup holder sleeve extension.gltf'), 
+        assembled: { pos: [-0.035, 0.169, 0.026], rot: [0, 0, 0] } 
+      }
+ 
+]
+}
+];
 /* =========================================================
    BUILD STATIONS — one per kit. Every part — anchor piece or
    small hardware — sits on an identically-sized stand. Stands
