@@ -320,7 +320,7 @@ scene.add(sunLight);
 /* =========================================================
    ROOM
    ========================================================= */
-const ROOM_W = 60, ROOM_D = 34, ROOM_H = 5;
+const ROOM_W = 140, ROOM_D = 40, ROOM_H = 8;
 
 const floorMat = new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.75, metalness: 0.05 });
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), floorMat);
@@ -893,6 +893,13 @@ async function buildGalleryStations() {
 
     buildAssemblyPillar(kit, cx);
 
+    // Standalone items (no parts to combine, or just one) can never be
+    // reached through the Combine button (it needs 2+ selections) — show
+    // them on their pillar immediately instead of leaving it empty forever.
+    if (kit.parts.length <= 1) {
+      placeCompletedAssembly(kit).catch(err => console.error(`Failed to auto-place standalone item "${kit.name}":`, err));
+    }
+
     const spot = new THREE.SpotLight(0xfff2dd, 32, 11, Math.PI/4, 0.5, 1.5);
     spot.position.set(cx, ROOM_H - 0.2, PARTS_Z);
     spot.target.position.set(cx, 0.6, PARTS_Z);
@@ -945,7 +952,7 @@ async function buildGalleryStations() {
     }
   }
 
-  const signWidth = Math.max(n * ROW_SPACING - 1.5, 5);
+  const signWidth = Math.min(Math.max(n * 1.6, 8), 18);
   makeSign('FINAL ASSEMBLIES', 0, SIGN_Y, WALL_Z, signWidth);
 }
 
@@ -1049,6 +1056,10 @@ let hovered = null;
 
 function tryPickup() {
   if (!hovered || inventory.length >= 10) return;
+  if (partAlreadyHeld(hovered.part.id)) {
+    showCombineMsg(`You already have the ${hovered.part.name} in your inventory.`);
+    return;
+  }
   addToInventory(hovered.kit, hovered.part);
 
   if (hovered.kit._realKit) {
@@ -1154,6 +1165,10 @@ async function buildKitObject(kit, partIds) {
     idx++;
   }
   return g;
+}
+
+function partAlreadyHeld(partId) {
+  return inventory.some(item => item.partIds.has(partId));
 }
 
 function addToInventory(kit, part) {
@@ -1276,13 +1291,24 @@ async function placeCompletedAssembly(kit) {
   const slot = kit._assemblySlot;
   if (!slot || slot.mesh) return; // no reserved pillar, or already occupied
 
+  // Prefer the dedicated final-assembly file; for a truly standalone item
+  // that never had one set, fall back to its single part's own model.
+  const loader = kit.finalAssemblyPath
+    ? () => loadModelCached(kit.finalAssemblyPath)
+    : (kit.parts[0] ? kit.parts[0].local : null);
+
   let mesh;
-  try {
-    mesh = await loadModelCached(kit.finalAssemblyPath);
-    if (!mesh) throw new Error('load returned nothing');
-  } catch (err) {
-    console.error(`Failed to load completed assembly for ${kit.name}:`, err);
+  if (!loader) {
+    console.error(`Kit "${kit.name}" has no finalAssemblyPath and no parts — nothing to show on its pillar.`);
     mesh = buildErrorPlaceholder();
+  } else {
+    try {
+      mesh = await loader();
+      if (!mesh) throw new Error('load returned nothing');
+    } catch (err) {
+      console.error(`Failed to load completed assembly for ${kit.name}:`, err);
+      mesh = buildErrorPlaceholder();
+    }
   }
   mesh.position.set(slot.x, slot.worldY, slot.z);
   mesh.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
@@ -1296,7 +1322,7 @@ async function placeCompletedAssembly(kit) {
   // it knows to return it here rather than disappearing.
   if (!kit._pseudoKit) {
     const pseudoPart = { id: `${kit.id}-complete-part`, name: `${kit.name} (Complete)`,
-      local: () => loadModelCached(kit.finalAssemblyPath), assembled: { pos:[0,0,0], rot:[0,0,0] } };
+      local: loader || (() => buildErrorPlaceholder()), assembled: { pos:[0,0,0], rot:[0,0,0] } };
     kit._pseudoKit = { id: `${kit.id}-complete`, name: kit.name, meta: 'Completed Assembly', color: kit.color,
       finalAssemblyPath: kit.finalAssemblyPath, parts: [pseudoPart], _realKit: kit };
     KITS.push(kit._pseudoKit);
@@ -1512,7 +1538,11 @@ function updateHoverPrompt() {
     const hitRoot = pickables.find(p => p.mesh === hits[0].object || p.mesh.getObjectById(hits[0].object.id));
     hovered = hitRoot || null;
     if (hovered) {
-      promptEl.innerHTML = `Press <strong>E</strong> to pick up ${hovered.part.name}<span class="sub">${hovered.kit.name}</span>`;
+      if (partAlreadyHeld(hovered.part.id)) {
+        promptEl.innerHTML = `Already in your inventory<span class="sub">${hovered.part.name} — ${hovered.kit.name}</span>`;
+      } else {
+        promptEl.innerHTML = `Press <strong>E</strong> to pick up ${hovered.part.name}<span class="sub">${hovered.kit.name}</span>`;
+      }
       promptEl.style.display = 'block';
     }
   } else {
