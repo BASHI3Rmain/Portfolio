@@ -694,7 +694,7 @@ const STAND_RADIUS_TOP = 0.4, STAND_RADIUS_BOTTOM = 0.45, STAND_HEIGHT = 0.7;
 // flush on the wall behind the pillars, player starts near the front.
 const ROW_SPACING = 13;
 const ASSEMBLY_Z = -ROOM_D/2 + 3.2;   // pillar row, close to the back wall
-const PARTS_Z = ASSEMBLY_Z + 5;        // parts pile sits in front of the pillars
+const PARTS_Z = ASSEMBLY_Z + 3.2;      // parts pile sits in front of the pillars
 const WALL_Z = -ROOM_D/2 + 0.05;       // flush against the back wall
 const PHOTO_Y = 1.85;                   // roughly head height
 const SIGN_Y = ROOM_H - 0.9;
@@ -886,9 +886,14 @@ function buildAssemblyPillar(kit, x) {
 }
 
 async function buildGalleryStations() {
-  const n = KITS.length;
+  // Snapshot the real kits before building anything — placeCompletedAssembly
+  // pushes pseudo-kits onto the live KITS array, and iterating that array
+  // directly would let this loop pick up and re-process those pushes too
+  // (each one triggering another push), freezing the page in a runaway loop.
+  const realKits = KITS.filter(k => !k._realKit);
+  const n = realKits.length;
 
-  for (const [i, kit] of KITS.entries()) {
+  for (const [i, kit] of realKits.entries()) {
     const cx = (i - (n - 1) / 2) * ROW_SPACING;
 
     buildAssemblyPillar(kit, cx);
