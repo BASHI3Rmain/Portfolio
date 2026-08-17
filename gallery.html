@@ -1355,6 +1355,19 @@ function itemLabel(item) {
   return { name: done ? `${kit.name} (complete)` : `${kit.name} (partial)`, sub: `${held}/${total} pieces`, done };
 }
 
+function cardInnerHTML(item, info) {
+  return `
+    <div class="swatch" data-swatch-uid="${item.uid}"><div class="fallback" style="background:${item.color}"></div></div>
+    <div class="name">${info.done ? '✅ ' : ''}${info.name}</div>
+    <div class="progress ${info.done ? 'done' : ''}">${info.sub}</div>
+    <div class="row"><label class="combine-check"><input type="checkbox" data-uid="${item.uid}" class="combine-cb" ${item.selected ? 'checked' : ''}> combine</label></div>
+    <div class="row" style="margin-top:6px;">
+      <button data-action="inspect" data-uid="${item.uid}">Inspect</button>
+      <button data-action="download" data-uid="${item.uid}">Download STL</button>
+      <button data-action="drop" data-uid="${item.uid}">Drop</button>
+    </div>`;
+}
+
 function renderInventory() {
   slotsEl.innerHTML = '';
   emptyEl.style.display = inventory.length ? 'none' : 'inline';
@@ -1362,27 +1375,95 @@ function renderInventory() {
     const info = itemLabel(item);
     const slot = document.createElement('div');
     slot.className = 'slot' + (info.done ? ' complete' : '');
-    slot.innerHTML = `
-      <div class="swatch" id="swatch-${item.uid}"><div class="fallback" style="background:${item.color}"></div></div>
-      <div class="name">${info.done ? '✅ ' : ''}${info.name}</div>
-      <div class="progress ${info.done ? 'done' : ''}">${info.sub}</div>
-      <div class="row"><label class="combine-check"><input type="checkbox" data-uid="${item.uid}" class="combine-cb"> combine</label></div>
-      <div class="row" style="margin-top:6px;">
-        <button data-action="inspect" data-uid="${item.uid}">Inspect</button>
-        <button data-action="download" data-uid="${item.uid}">Download STL</button>
-        <button data-action="drop" data-uid="${item.uid}">Drop</button>
-      </div>`;
+    slot.innerHTML = cardInnerHTML(item, info);
     slotsEl.appendChild(slot);
   });
   updateCombineBtn();
   updateThumbnails();
+  if (modalOpen) renderInventoryModal();
 }
+
+/* =========================================================
+   INVENTORY MODAL — click the "Inventory" label to open a full
+   grid of everything you're holding, grouped by which assembly
+   it belongs to. Shares the exact same cards/actions/thumbnails
+   as the bottom bar (same data, same event handlers) — this is
+   just a bigger, organized view of it, for both desktop and mobile.
+   ========================================================= */
+let modalOpen = false;
+const inventoryModal = document.getElementById('inventory-modal');
+const inventoryModalBody = document.getElementById('inventory-modal-body');
+
+function renderInventoryModal() {
+  if (!inventory.length) {
+    inventoryModalBody.innerHTML = `<p class="modal-empty">Nothing picked up yet — walk up to a piece and grab it.</p>`;
+    updateCombineBtn();
+    return;
+  }
+  const groups = new Map(); // real kit id -> { name, items: [] }
+  inventory.forEach(item => {
+    const kit = KITS.find(k => k.id === item.kitId);
+    const realId = kit._realKit ? kit._realKit.id : kit.id;
+    const realName = kit._realKit ? kit._realKit.name : kit.name;
+    if (!groups.has(realId)) groups.set(realId, { name: realName, items: [] });
+    groups.get(realId).items.push(item);
+  });
+
+  let html = '';
+  for (const { name, items } of groups.values()) {
+    html += `<div class="modal-group"><h3>${name}</h3><div class="modal-grid">`;
+    items.forEach(item => {
+      const info = itemLabel(item);
+      html += `<div class="modal-card slot${info.done ? ' complete' : ''}">${cardInnerHTML(item, info)}</div>`;
+    });
+    html += `</div></div>`;
+  }
+  inventoryModalBody.innerHTML = html;
+  updateCombineBtn();
+  updateThumbnails();
+}
+
+function openInventoryModal() {
+  modalOpen = true;
+  inventoryModal.style.display = 'flex';
+  renderInventoryModal();
+}
+function closeInventoryModal() {
+  modalOpen = false;
+  inventoryModal.style.display = 'none';
+}
+document.getElementById('inventory-label-btn').addEventListener('click', openInventoryModal);
+document.getElementById('inventory-modal-close').addEventListener('click', closeInventoryModal);
+inventoryModal.addEventListener('click', e => { if (e.target === inventoryModal) closeInventoryModal(); });
+document.getElementById('modal-combine-btn').addEventListener('click', runCombine);
+document.addEventListener('keydown', e => { if (e.code === 'Escape' && modalOpen) closeInventoryModal(); });
+
+// Shared by both the bottom bar and the modal — same items, same actions.
+function handleCardClick(e) {
+  const action = e.target.dataset.action;
+  const uidVal = Number(e.target.dataset.uid);
+  if (!action) return;
+  const item = inventory.find(i => i.uid === uidVal);
+  if (!item) return;
+  if (action === 'inspect') openInspect(item);
+  if (action === 'download') downloadItem(item);
+  if (action === 'drop') dropItem(item);
+}
+function handleCardChange(e) {
+  if (!e.target.classList.contains('combine-cb')) return;
+  const item = inventory.find(i => i.uid === Number(e.target.dataset.uid));
+  if (item) item.selected = e.target.checked;
+  updateCombineBtn();
+}
+inventoryModalBody.addEventListener('click', handleCardClick);
+inventoryModalBody.addEventListener('change', handleCardChange);
 
 /* =========================================================
    INVENTORY THUMBNAILS — render each held item to a small
    offscreen canvas instead of showing a flat color bar. Cached
    per exact combination of parts held, so re-renders don't
    redo the work unless the item's contents actually changed.
+   Updates every matching swatch on screen (bar and/or modal).
    ========================================================= */
 const thumbScene = new THREE.Scene();
 thumbScene.background = new THREE.Color(0x12141a);
@@ -1415,37 +1496,22 @@ async function generateThumbnail(item) {
 function updateThumbnails() {
   inventory.forEach(item => {
     const key = [...item.partIds].sort().join(',');
-    const el = document.getElementById(`swatch-${item.uid}`);
-    if (!el) return;
+    const els = document.querySelectorAll(`[data-swatch-uid="${item.uid}"]`);
+    if (!els.length) return;
     if (item._thumbKey === key && item._thumbURL) {
-      el.innerHTML = `<img src="${item._thumbURL}" alt="${item.kitName}">`;
+      els.forEach(el => el.innerHTML = `<img src="${item._thumbURL}" alt="${item.kitName}">`);
       return;
     }
     generateThumbnail(item).then(url => {
       item._thumbKey = key;
       item._thumbURL = url;
-      const liveEl = document.getElementById(`swatch-${item.uid}`);
-      if (liveEl) liveEl.innerHTML = `<img src="${url}" alt="${item.kitName}">`;
+      document.querySelectorAll(`[data-swatch-uid="${item.uid}"]`).forEach(el => el.innerHTML = `<img src="${url}" alt="${item.kitName}">`);
     }).catch(err => console.error('Thumbnail render failed for item', item, err));
   });
 }
 
-slotsEl.addEventListener('click', e => {
-  const action = e.target.dataset.action;
-  const uidVal = Number(e.target.dataset.uid);
-  if (!action) return;
-  const item = inventory.find(i => i.uid === uidVal);
-  if (!item) return;
-  if (action === 'inspect') openInspect(item);
-  if (action === 'download') downloadItem(item);
-  if (action === 'drop') dropItem(item);
-});
-slotsEl.addEventListener('change', e => {
-  if (!e.target.classList.contains('combine-cb')) return;
-  const item = inventory.find(i => i.uid === Number(e.target.dataset.uid));
-  if (item) item.selected = e.target.checked;
-  updateCombineBtn();
-});
+slotsEl.addEventListener('click', handleCardClick);
+slotsEl.addEventListener('change', handleCardChange);
 
 /* =========================================================
    COMPLETION — a finished assembly doesn't sit in your inventory
@@ -1505,8 +1571,11 @@ async function placeCompletedAssembly(kit) {
 
 function updateCombineBtn() {
   const n = inventory.filter(i => i.selected).length;
-  combineBtn.textContent = `Combine Selected (${n})`;
+  const text = `Combine Selected (${n})`;
+  combineBtn.textContent = text;
   combineBtn.disabled = n < 2;
+  const modalBtn = document.getElementById('modal-combine-btn');
+  if (modalBtn) { modalBtn.textContent = text; modalBtn.disabled = n < 2; }
 }
 
 function showCombineMsg(text) {
@@ -1518,7 +1587,8 @@ function showCombineMsg(text) {
 
 // Combine as many selected items as you like at once (2 or more), as long
 // as they're all from the same project and don't share any pieces already.
-combineBtn.addEventListener('click', () => {
+// Shared by both the bottom-bar Combine button and the inventory modal's.
+function runCombine() {
   const chosen = inventory.filter(i => i.selected);
   if (chosen.length < 2) return;
 
@@ -1550,7 +1620,8 @@ combineBtn.addEventListener('click', () => {
     inventory.push({ uid: uid++, kitId, kitName: chosen[0].kitName, color: chosen[0].color, partIds: mergedIds, selected: false });
     renderInventory();
   }
-});
+}
+combineBtn.addEventListener('click', runCombine);
 
 async function dropItem(item) {
   inventory = inventory.filter(i => i.uid !== item.uid);
@@ -1573,18 +1644,25 @@ function downloadItem(item) {
   const kit = KITS.find(k => k.id === item.kitId);
   // A completed assembly downloads the full original part set (not a
   // "-complete" file that doesn't exist) — every .stl that makes up the kit.
-  const partIds = kit._realKit ? kit._realKit.parts.map(p => p.id) : [...item.partIds];
+  // A standalone kit (no parts at all, e.g. Wall Cover) has nothing to map
+  // over, so it falls back to the kit's own name — matching the .gltf/.stl
+  // naming convention already used for its finalAssemblyPath.
+  let fileNames;
+  if (kit._realKit) {
+    fileNames = kit._realKit.parts.length ? kit._realKit.parts.map(p => p.id) : [kit._realKit.id];
+  } else {
+    fileNames = [...item.partIds];
+  }
   // Downloads the real STL file for every part in this slot — assumes each
-  // STL lives at models/<part-id>.stl, matching the naming convention
-  // already used for the .gltf/.bin pairs. Rename the files in models/ if
-  // yours differ.
-  partIds.forEach((partId, i) => {
-    const url = `models/${partId}.stl`;
+  // STL lives at models/<name>.stl, matching the naming convention already
+  // used for the .gltf/.bin pairs. Rename the files in models/ if yours differ.
+  fileNames.forEach((name, i) => {
+    const url = `models/${name}.stl`;
     // Stagger slightly so multi-part downloads don't get blocked as a popup burst.
     setTimeout(() => {
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${partId}.stl`;
+      a.download = `${name}.stl`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
