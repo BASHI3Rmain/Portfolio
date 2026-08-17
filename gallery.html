@@ -1386,7 +1386,13 @@ async function getAssemblyTransforms(kit) {
         const quaternion = new THREE.Quaternion();
         const scale = new THREE.Vector3();
         match.matrixWorld.decompose(position, quaternion, scale);
-        map.set(part.id, { position, quaternion });
+        // Scale matters too: if this part's own file was exported at a
+        // different unit scale than the assembly (mm vs m is a very common
+        // CAD-export mismatch), rotation looks completely fine — it's
+        // scale-invariant — but the part renders the wrong size around an
+        // otherwise-correct pivot point, which reads as "right direction,
+        // wrong spot" exactly like this. Applying the node's scale corrects it.
+        map.set(part.id, { position, quaternion, scale });
       } else {
         console.warn(`[${kit.name}] no assembly node matched part "${part.name}" (${part.id}) — using its manual 'assembled' offset instead. Check the node names logged above and rename if you'd like an exact match.`);
       }
