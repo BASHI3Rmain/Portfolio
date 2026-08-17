@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bashar Shaaban | 3D Project Gallery</title>
 <style>
   * { box-sizing: border-box; }
@@ -13,7 +13,40 @@
     color: #eee;
   }
   #canvas-wrap { position: fixed; inset: 0; }
-  canvas { display: block; }
+  canvas { display: block; touch-action: none; }
+
+  /* ---- Mobile touch controls — shown only on touch-primary devices ---- */
+  #touch-controls { display: none; }
+  @media (hover: none), (pointer: coarse) {
+    #touch-controls { display: block; }
+    #controls-desktop { display: none !important; }
+    #controls-touch { display: grid !important; }
+  }
+
+  #touch-joystick {
+    position: fixed; left: 24px; bottom: 100px; z-index: 18;
+    width: 110px; height: 110px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.35);
+    touch-action: none;
+  }
+  #touch-joystick-knob {
+    position: absolute; top: 50%; left: 50%; width: 50px; height: 50px;
+    margin: -25px 0 0 -25px; border-radius: 50%;
+    background: rgba(255,255,255,0.55); border: 2px solid rgba(255,255,255,0.7);
+    pointer-events: none;
+  }
+  #touch-interact {
+    position: fixed; right: 26px; bottom: 110px; z-index: 18;
+    width: 84px; height: 84px; border-radius: 50%;
+    background: rgba(77,159,255,0.85); border: 2px solid rgba(255,255,255,0.7);
+    color: #fff; font-weight: bold; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    touch-action: none; -webkit-tap-highlight-color: transparent;
+  }
+  #touch-interact:active { background: rgba(77,159,255,1); }
+  #touch-look-layer {
+    position: fixed; inset: 0; z-index: 5; touch-action: none;
+  }
 
   /* ---- Top bar, matches the rest of the site ---- */
   #topbar {
@@ -155,13 +188,19 @@
 <div id="splash">
   <h1>🖼️ The Fabrication Gallery</h1>
   <p class="sub">Each project is laid out as a kit of real parts — frame, arm, hook, fastener set and so on. Pick up individual pieces and snap them together in your inventory to build the full assembly.</p>
-  <div class="controls">
+  <div class="controls" id="controls-desktop">
     <div><b>WASD</b> Move</div>
     <div><b>Mouse</b> Look around</div>
     <div><b>Shift</b> Walk faster</div>
     <div><b>E</b> Pick up / take piece</div>
     <div><b>Hold Alt</b> Free the mouse</div>
     <div><b>Click item</b> Inspect / Combine / Download</div>
+  </div>
+  <div class="controls" id="controls-touch" style="display:none;">
+    <div><b>Joystick</b> Move (bottom-left)</div>
+    <div><b>Drag screen</b> Look around</div>
+    <div><b>Pick Up button</b> Take piece (bottom-right)</div>
+    <div><b>Tap item</b> Inspect / Combine / Download</div>
   </div>
   <button id="start-btn">Enter Gallery</button>
   <p class="note">Note: every piece here is a stand-in shape built for this demo. Swap in real SolidWorks-exported geometry per part once it's ready (see models-README.md) — the pickup, snapping, and download system already works with whatever mesh is loaded.</p>
@@ -177,6 +216,15 @@
 <div id="crosshair"></div>
 <div id="prompt"></div>
 <div id="combine-msg"></div>
+
+<div id="touch-controls">
+  <!-- Covers the screen to catch look-drags, but sits above the canvas and
+       below the joystick/interact button/inventory bar so it never steals
+       touches meant for actual UI elements. -->
+  <div id="touch-look-layer"></div>
+  <div id="touch-joystick"><div id="touch-joystick-knob"></div></div>
+  <button id="touch-interact">Pick<br>Up</button>
+</div>
 
 <div id="inventory">
   <span class="label">INVENTORY</span>
@@ -967,6 +1015,7 @@ buildGalleryStations().catch(err => console.error('Gallery station build failed:
 /* =========================================================
    FIRST PERSON CONTROLS
    ========================================================= */
+const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches || 'ontouchstart' in window;
 const controls = new PointerLockControls(camera, renderer.domElement);
 const splash = document.getElementById('splash');
 const resumeHint = document.getElementById('resume-hint');
@@ -980,10 +1029,29 @@ document.getElementById('exit-link').addEventListener('click', (e) => {
 });
 let hasEnteredOnce = false;
 let altHeld = false;
+let touchActive = false; // mobile equivalent of controls.isLocked — there's no real pointer lock on touch
+
+// True while the player should be able to walk/look around, regardless of
+// whether that's real browser pointer lock (desktop) or touch mode (mobile).
+function isWalking() { return controls.isLocked || touchActive; }
+
+// Single entry point for "start/resume walking" on both input types.
+function resumeWalking() {
+  if (inspectOpen) return;
+  hasEnteredOnce = true;
+  splash.style.display = 'none';
+  resumeHint.style.display = 'none';
+  if (isTouchDevice) touchActive = true;
+  else if (!controls.isLocked) controls.lock();
+}
+function pauseWalking() {
+  touchActive = false;
+  if (controls.isLocked) controls.unlock();
+}
 
 startBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  controls.lock();
+  resumeWalking();
 });
 
 controls.addEventListener('lock', () => {
@@ -996,7 +1064,8 @@ controls.addEventListener('lock', () => {
 // so instead of fighting it, only the very first unlock (before the user
 // has ever entered) shows the big splash. Every unlock after that (Escape,
 // Alt, or clicking away) just frees the mouse with a small hint, and the
-// inventory bar stays fully clickable underneath.
+// inventory bar stays fully clickable underneath. (Touch mode never engages
+// real pointer lock, so this only ever fires for desktop/mouse.)
 controls.addEventListener('unlock', () => {
   if (inspectOpen) return;
   if (!hasEnteredOnce) {
@@ -1025,10 +1094,10 @@ document.addEventListener('keyup', e => {
 // Prevent the browser menu-bar focus that some browsers trigger on Alt.
 window.addEventListener('keydown', e => { if (e.code === 'AltLeft' || e.code === 'AltRight') e.preventDefault(); });
 
-// Click back into the 3D view (anywhere that isn't the inventory/UI) to
-// resume walking after the mouse was freed.
+// Click/tap back into the 3D view (anywhere that isn't the inventory/UI) to
+// resume walking after the mouse was freed, or to start on mobile.
 canvasWrap.addEventListener('click', () => {
-  if (hasEnteredOnce && !controls.isLocked && !inspectOpen) controls.lock();
+  if (hasEnteredOnce && !isWalking() && !inspectOpen) resumeWalking();
 });
 
 
@@ -1051,6 +1120,99 @@ document.addEventListener('keyup', e => {
 
 const velocity = new THREE.Vector3();
 const clock = new THREE.Clock();
+
+/* =========================================================
+   TOUCH CONTROLS (mobile) — a virtual joystick for movement, a
+   full-screen drag layer for looking around, and a tappable
+   button standing in for the "E" pick-up key. Only visible/active
+   on touch-primary devices (see the #touch-controls CSS), but the
+   listeners are harmless to set up unconditionally either way.
+   ========================================================= */
+let joystickX = 0, joystickForward = 0; // -1..1 analog input, blended with WASD in animate()
+const joystickEl = document.getElementById('touch-joystick');
+const joystickKnob = document.getElementById('touch-joystick-knob');
+const lookLayer = document.getElementById('touch-look-layer');
+const touchInteractBtn = document.getElementById('touch-interact');
+
+(function setupJoystick() {
+  let touchId = null, originX = 0, originY = 0;
+  const maxR = 45;
+
+  function start(e) {
+    const t = e.changedTouches[0];
+    touchId = t.identifier;
+    const rect = joystickEl.getBoundingClientRect();
+    originX = rect.left + rect.width / 2;
+    originY = rect.top + rect.height / 2;
+    e.preventDefault();
+  }
+  function move(e) {
+    for (const t of e.changedTouches) {
+      if (t.identifier !== touchId) continue;
+      let dx = t.clientX - originX, dy = t.clientY - originY;
+      const mag = Math.hypot(dx, dy);
+      if (mag > maxR) { dx *= maxR / mag; dy *= maxR / mag; }
+      joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+      joystickX = dx / maxR;
+      joystickForward = -dy / maxR;
+      e.preventDefault();
+    }
+  }
+  function end(e) {
+    for (const t of e.changedTouches) {
+      if (t.identifier !== touchId) continue;
+      touchId = null;
+      joystickX = 0; joystickForward = 0;
+      joystickKnob.style.transform = 'translate(0px, 0px)';
+    }
+  }
+  joystickEl.addEventListener('touchstart', start, { passive: false });
+  joystickEl.addEventListener('touchmove', move, { passive: false });
+  joystickEl.addEventListener('touchend', end, { passive: false });
+  joystickEl.addEventListener('touchcancel', end, { passive: false });
+})();
+
+(function setupTouchLook() {
+  let touchId = null, lastX = 0, lastY = 0;
+  const lookSpeed = 0.0032;
+
+  lookLayer.addEventListener('touchstart', e => {
+    if (touchId !== null || !isWalking()) return;
+    const t = e.changedTouches[0];
+    touchId = t.identifier;
+    lastX = t.clientX; lastY = t.clientY;
+    e.preventDefault();
+  }, { passive: false });
+
+  lookLayer.addEventListener('touchmove', e => {
+    for (const t of e.changedTouches) {
+      if (t.identifier !== touchId) continue;
+      const dx = t.clientX - lastX, dy = t.clientY - lastY;
+      lastX = t.clientX; lastY = t.clientY;
+      controls.getObject().rotation.y -= dx * lookSpeed;
+      camera.rotation.x -= dy * lookSpeed;
+      camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  function end(e) {
+    for (const t of e.changedTouches) { if (t.identifier === touchId) touchId = null; }
+  }
+  lookLayer.addEventListener('touchend', end, { passive: false });
+  lookLayer.addEventListener('touchcancel', end, { passive: false });
+
+  // Tapping the look layer (not dragging) also starts/resumes walking,
+  // same as clicking the canvas does on desktop.
+  lookLayer.addEventListener('click', () => {
+    if (hasEnteredOnce && !isWalking() && !inspectOpen) resumeWalking();
+  });
+})();
+
+touchInteractBtn.addEventListener('touchstart', e => {
+  e.preventDefault();
+  tryPickup();
+});
 
 /* =========================================================
    RAYCAST PICKUP PROMPT
@@ -1504,7 +1666,7 @@ async function openInspect(item) {
   inspectTitle.textContent = info.name;
   inspectEl.style.display = 'flex';
   inspectOpen = true;
-  controls.unlock();
+  pauseWalking();
   resizeInspect();
 }
 function resizeInspect() {
@@ -1515,7 +1677,7 @@ function resizeInspect() {
 function closeInspect() {
   inspectEl.style.display = 'none';
   inspectOpen = false;
-  controls.lock(); // drop straight back into the 3D space, not the splash
+  resumeWalking(); // drop straight back into the 3D space, not the splash
 }
 document.getElementById('inspect-close').addEventListener('click', closeInspect);
 document.addEventListener('keydown', e => {
@@ -1545,6 +1707,8 @@ function updateHoverPrompt() {
     if (hovered) {
       if (partAlreadyHeld(hovered.part.id)) {
         promptEl.innerHTML = `Already in your inventory<span class="sub">${hovered.part.name} — ${hovered.kit.name}</span>`;
+      } else if (isTouchDevice) {
+        promptEl.innerHTML = `Tap <strong>Pick Up</strong> for ${hovered.part.name}<span class="sub">${hovered.kit.name}</span>`;
       } else {
         promptEl.innerHTML = `Press <strong>E</strong> to pick up ${hovered.part.name}<span class="sub">${hovered.kit.name}</span>`;
       }
@@ -1554,19 +1718,29 @@ function updateHoverPrompt() {
     hovered = null;
     promptEl.style.display = 'none';
   }
+  touchInteractBtn.style.opacity = hovered && !partAlreadyHeld(hovered.part.id) ? '1' : '0.45';
 }
 
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
 
-  if (controls.isLocked && !inspectOpen) {
+  if (isWalking() && !inspectOpen) {
     const speed = move.sprint ? 6.5 : 3.6;
     velocity.x -= velocity.x * 8 * dt;
     velocity.z -= velocity.z * 8 * dt;
-    const dir = new THREE.Vector3(Number(move.r)-Number(move.l), 0, Number(move.f)-Number(move.b)).normalize();
-    if (move.f||move.b) velocity.z -= dir.z * speed * dt * 10;
-    if (move.l||move.r) velocity.x -= dir.x * speed * dt * 10;
+
+    // Blend keyboard (binary, desktop) with the joystick (analog, mobile) —
+    // clamped to length 1 so diagonal keyboard movement isn't faster than
+    // straight movement, same as before, just with joystick input folded in.
+    let rawX = (Number(move.r) - Number(move.l)) + joystickX;
+    let rawZ = (Number(move.f) - Number(move.b)) + joystickForward;
+    const mag = Math.hypot(rawX, rawZ);
+    if (mag > 1) { rawX /= mag; rawZ /= mag; }
+    if (mag > 0.02) {
+      velocity.z -= rawZ * speed * dt * 10;
+      velocity.x -= rawX * speed * dt * 10;
+    }
 
     controls.moveRight(-velocity.x * dt);
     controls.moveForward(-velocity.z * dt);
