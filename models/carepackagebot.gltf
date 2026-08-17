@@ -1,116 +1,162 @@
 {
-	"asset": {
-		"generator": "SOLIDWORKSGLTF",
-		"version" : "2.0"
-	},
-"extensionsUsed": [ "KHR_lights_punctual", "Solidworks_custom_properties", "KHR_draco_mesh_compression"],
-"extensionsRequired": [ "KHR_draco_mesh_compression" ],
-	"scene" : 0,
-	"scenes": [
-		{
-			"name": "Default - <Default>_Display State 1",
-			"nodes": [
-				0, 1]
-		}
-	],
-	"nodes": [
-		{
-			"matrix": [
-				0.884418,					0,					-0.466695,					0,
-				-0.240366,					0.857167,					-0.455509,					0,
-				0.400036,					0.515038,					0.758094,					0,
-				0.143618,					0.226617,					0.350657,					1
-			]
-			,"camera": 0
-			,"name": "current"		}
-,
-		{
-			"mesh": 0
-			,"name": "CarePackageBot.SLDPRT"		}
-	],
-	"cameras": [
-		{
-			"type": "orthographic",
-			"orthographic" : {
-				"xmag": 1,
-				"ymag" : 1,
-				"zfar" : 100,
-				"znear" : 0.01
-			}
-		}
-	],
-	"meshes" : [
-		{
-			"primitives" : [
-				{
-					"attributes" : {
-					"POSITION" : 1,
-					"NORMAL" : 2,
-					"TEXCOORD_0" : 3
-					},
-					"indices" : 0,
-					"mode": 4,
-					"material" : 0
-					,"extensions": {
-					"KHR_draco_mesh_compression": {
-					"bufferView": 0,
-					"attributes" : {
-					"POSITION": 0,
-					"NORMAL" : 1,
-					"TEXCOORD_0" : 2
-					}
-					}
-					}
-				}
-			]
-		}
-	],
-	"accessors" : [
-			{
-				"componentType" : 5123
-				,"count" : 19146
-				,"type" : "SCALAR"
-			},
-			{
-				"componentType" : 5126
-				,"count" : 5884
-				,"type" : "VEC3"
-				,"min" : [-2.19999999e-02, 0.00000000e+00, -2.73000002e-02]
-				,"max" : [2.19999999e-02, 1.49999997e-02, 1.17549435e-38]
-			},
-			{
-				"componentType" : 5126
-				,"count" : 5884
-				,"type" : "VEC3"
-			},
-			{
-				"componentType" : 5126
-				,"count" : 5884
-				,"type" : "VEC2"
-			}
-	],
-	"materials": [
-			{
-				"pbrMetallicRoughness": {
-					"baseColorFactor": [
-						0.498039, 0.498039, 0.498039, 1
-					]
-					,"metallicFactor": 0
-					,"roughnessFactor": 1
-				}
-			}
-	],
-	"bufferViews" : [
-			{
-				"buffer": 0
-				,"byteOffset" : 0
-				,"byteLength" : 28792
-			}
-	],
-	"buffers" : [
-			{
-				"byteLength": 28792
-				,"uri" : "data.bin"
-			}
-	]
+    "asset": {
+        "generator": "SOLIDWORKSGLTF",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Default",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                0.9805887601705516,
+                0.12000530961603656,
+                -0.155062597331334,
+                0.0,
+                -0.19079720760186517,
+                0.7662617676300522,
+                -0.6135465174212943,
+                0.0,
+                0.04518970013743162,
+                0.6312223293994178,
+                0.7742843546585852,
+                0.0,
+                0.032657599926610714,
+                0.4636704599847897,
+                0.5454779354755848,
+                1.0
+            ],
+            "camera": 0,
+            "name": "current camera"
+        },
+        {
+            "mesh": 0,
+            "name": "CarePackageBot"
+        }
+    ],
+    "cameras": [
+        {
+            "type": "orthographic",
+            "orthographic": {
+                "xmag": 0.19876362718924795,
+                "ymag": 0.15359007555532794,
+                "zfar": 0.7769254832043839,
+                "znear": 0.6955541857270876
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 19146,
+            "type": "SCALAR",
+            "min": [
+                0
+            ],
+            "max": [
+                9313
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 9314,
+            "type": "VEC3",
+            "min": [
+                -0.02199999988079071,
+                0.0,
+                -0.027300000190734863
+            ],
+            "max": [
+                0.02199999988079071,
+                0.014999999664723873,
+                -0.00009999999747378752
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 9314,
+            "type": "VEC3",
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "name": "defaultplastic",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.5989418101001601,
+                    0.6455552910764322,
+                    0.8591735777059335,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.16999999880790712
+            }
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 76584,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 76584,
+            "byteLength": 111768,
+            "byteStride": 12,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 188352,
+            "byteLength": 111768,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "CarePackageBot.bin",
+            "byteLength": 300120
+        }
+    ]
 }
