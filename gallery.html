@@ -126,8 +126,23 @@
     border-top: 1px solid rgba(255,255,255,0.08);
     padding: 10px 16px; display: flex; align-items: center; gap: 12px;
     overflow-x: auto;
+    transition: transform 0.25s ease;
   }
-  #inventory .label { font-size: 0.8rem; color: #888; white-space: nowrap; margin-right: 4px; }
+  /* Collapsed: slide the bar down so only the handle peeks out — mainly for
+     mobile, where the bar can otherwise block the joystick/interact button. */
+  #inventory.collapsed { transform: translateY(calc(100% - 26px)); }
+  #inventory-handle {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    background: rgba(15,16,20,0.9); color: #ccc; border: 1px solid rgba(255,255,255,0.15);
+    border-bottom: none; border-radius: 8px 8px 0 0; padding: 3px 20px;
+    font-size: 0.9rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  #inventory-label-btn {
+    font-size: 0.8rem; color: #ddd; white-space: nowrap; margin-right: 4px;
+    background: #2a2d35; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+    padding: 6px 10px; cursor: pointer; font-weight: bold;
+  }
+  #inventory-label-btn:hover { background: #0056b3; color: #fff; }
   .slot {
     background: #1c1e24; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
     padding: 8px 10px; min-width: 160px; flex-shrink: 0;
@@ -158,6 +173,48 @@
     background: rgba(0,0,0,0.85); color: #ff8080; padding: 8px 16px; border-radius: 6px;
     font-size: 0.85rem; z-index: 25; display: none;
   }
+
+  /* ---- Inventory modal — full grid, grouped by assembly ---- */
+  #inventory-modal {
+    position: fixed; inset: 0; z-index: 35; display: none;
+    background: rgba(6,7,9,0.88); align-items: center; justify-content: center; padding: 20px;
+  }
+  #inventory-modal-panel {
+    background: #16171c; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    width: 100%; max-width: 900px; max-height: 82vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #inventory-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  #inventory-modal-header h2 { margin: 0; color: #fff; font-size: 1.2rem; }
+  #inventory-modal-close {
+    background: rgba(255,255,255,0.1); color: #fff; border: none;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer;
+  }
+  #inventory-modal-body { padding: 18px 20px; overflow-y: auto; flex: 1; }
+  .modal-empty { color: #777; font-style: italic; text-align: center; padding: 30px 0; }
+  .modal-group { margin-bottom: 22px; }
+  .modal-group:last-child { margin-bottom: 0; }
+  .modal-group h3 {
+    color: #4d9fff; font-size: 1rem; margin: 0 0 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;
+  }
+  .modal-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;
+  }
+  .modal-card { min-width: 0; }
+  .modal-card .swatch { height: 90px; }
+  #inventory-modal-footer {
+    padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: flex-end;
+  }
+  #modal-combine-btn {
+    background: #d97706; color: #fff; border: none; border-radius: 6px;
+    padding: 9px 16px; font-weight: bold; font-size: 0.85rem; cursor: pointer;
+  }
+  #modal-combine-btn:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
 
   /* ---- Inspect overlay ---- */
   #inspect {
@@ -227,10 +284,24 @@
 </div>
 
 <div id="inventory">
-  <span class="label">INVENTORY</span>
+  <button id="inventory-handle" aria-label="Collapse/expand inventory">▾</button>
+  <button id="inventory-label-btn" class="label">INVENTORY ▤</button>
   <span id="empty-inv">Nothing picked up yet — walk up to a piece and press E.</span>
   <div id="slots" style="display:flex; gap:12px;"></div>
   <button id="combine-btn" disabled>Combine Selected (0)</button>
+</div>
+
+<div id="inventory-modal">
+  <div id="inventory-modal-panel">
+    <div id="inventory-modal-header">
+      <h2>Your Inventory</h2>
+      <button id="inventory-modal-close">✕</button>
+    </div>
+    <div id="inventory-modal-body"></div>
+    <div id="inventory-modal-footer">
+      <button id="modal-combine-btn" disabled>Combine Selected (0)</button>
+    </div>
+  </div>
 </div>
 
 <div id="inspect">
@@ -1037,12 +1108,11 @@ function isWalking() { return controls.isLocked || touchActive; }
 
 // Single entry point for "start/resume walking" on both input types.
 function resumeWalking() {
- 
   if (inspectOpen) return;
   hasEnteredOnce = true;
   splash.style.display = 'none';
   resumeHint.style.display = 'none';
-  if (isTouchDevice){ touchActive = true;}
+  if (isTouchDevice) touchActive = true;
   else if (!controls.isLocked) controls.lock();
 }
 function pauseWalking() {
@@ -1258,6 +1328,13 @@ const emptyEl = document.getElementById('empty-inv');
 const combineBtn = document.getElementById('combine-btn');
 const combineMsg = document.getElementById('combine-msg');
 let uid = 0;
+
+const inventoryEl = document.getElementById('inventory');
+const inventoryHandle = document.getElementById('inventory-handle');
+inventoryHandle.addEventListener('click', () => {
+  const collapsed = inventoryEl.classList.toggle('collapsed');
+  inventoryHandle.textContent = collapsed ? '▴' : '▾';
+});
 
 /* =========================================================
    REAL ASSEMBLY TRANSFORMS — instead of trusting the hand-typed
