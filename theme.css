@@ -1,0 +1,196 @@
+/* =========================================================
+   SITE THEME SYSTEM
+   Shared across index.html / projects.html / resume.html.
+   Each page's own <style> block uses var(--x, <original color>)
+   so nothing breaks even if this file fails to load — the
+   fallback is exactly the original hardcoded color.
+
+   Applied via a data-theme attribute on <html>, set by theme.js
+   (and read from localStorage so it persists across pages).
+   ========================================================= */
+
+:root, [data-theme="light"] {
+  --bg: #fafafa;
+  --text: #333333;
+  --text-muted: #666666;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0,0,0,0.05);
+  --heading-color: #222222;
+  --accent: #0056b3;
+  --accent-hover: #004085;
+  --border: #cccccc;
+  --border-light: #eaeaea;
+  --highlight-bg: #f8f9fa;
+  --nav-hover-bg: #f0f0f0;
+  --radius: 8px;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #14161a;
+  --text: #dcdde0;
+  --text-muted: #9aa0aa;
+  --card-bg: #1e2126;
+  --card-shadow: rgba(0,0,0,0.45);
+  --heading-color: #f2f3f5;
+  --accent: #4d9fff;
+  --accent-hover: #2f7fe0;
+  --border: #3a3d44;
+  --border-light: #2a2d33;
+  --highlight-bg: #23262c;
+  --nav-hover-bg: #23262c;
+  --radius: 8px;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[data-theme="cyberpunk"] {
+  --bg: #0a0a12;
+  --text: #e0faff;
+  --text-muted: #8ab0c0;
+  --card-bg: #12121f;
+  --card-shadow: rgba(255,0,170,0.25);
+  --heading-color: #ff2fd0;
+  --accent: #00fff2;
+  --accent-hover: #ff2fd0;
+  --border: #ff2fd0;
+  --border-light: #2a1f3d;
+  --highlight-bg: #1a1030;
+  --nav-hover-bg: #1a1030;
+  --radius: 2px;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[data-theme="minecraft"] {
+  --bg: #2b2417;
+  --text: #e8e4d8;
+  --text-muted: #b7ae95;
+  --card-bg: #4a3c28;
+  --card-shadow: rgba(0,0,0,0.5);
+  --heading-color: #ffd966;
+  --accent: #6aa84f;
+  --accent-hover: #4f7d38;
+  --border: #7a6a4f;
+  --border-light: #5c4d38;
+  --highlight-bg: #3c3221;
+  --nav-hover-bg: #3c3221;
+  --radius: 0px;
+  --font-heading: 'Press Start 2P', 'Segoe UI', monospace;
+}
+
+[data-theme="dracula"] {
+  --bg: #282a36;
+  --text: #f8f8f2;
+  --text-muted: #a0a3c4;
+  --card-bg: #343746;
+  --card-shadow: rgba(0,0,0,0.4);
+  --heading-color: #bd93f9;
+  --accent: #ff79c6;
+  --accent-hover: #bd93f9;
+  --border: #44475a;
+  --border-light: #3a3d4d;
+  --highlight-bg: #383a4a;
+  --nav-hover-bg: #383a4a;
+  --radius: 8px;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[data-theme="synthwave"] {
+  --bg: #241b2f;
+  --text: #f4eee8;
+  --text-muted: #c792ea;
+  --card-bg: #2d1b40;
+  --card-shadow: rgba(255,110,199,0.3);
+  --heading-color: #ff6ec7;
+  --accent: #01cdfe;
+  --accent-hover: #ff6ec7;
+  --border: #ff6ec7;
+  --border-light: #3d2a52;
+  --highlight-bg: #34204a;
+  --nav-hover-bg: #34204a;
+  --radius: 8px;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Only Minecraft actually needs the pixel font loaded */
+[data-theme="minecraft"] { }
+
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ---- Floating theme-picker widget ---- */
+#theme-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+}
+#theme-toggle-btn:hover { transform: scale(1.08); }
+
+#theme-panel {
+  position: fixed;
+  bottom: 82px;
+  right: 20px;
+  z-index: 999;
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 190px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#theme-panel.open { display: flex; }
+#theme-panel .theme-panel-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 4px 8px 8px 8px;
+}
+#theme-panel button.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 8px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+#theme-panel button.theme-option:hover { background: var(--nav-hover-bg); }
+#theme-panel button.theme-option.active { background: var(--accent); color: #fff; }
+#theme-panel .swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(128,128,128,0.4);
+}
+
+@media (max-width: 480px) {
+  #theme-toggle-btn { bottom: 16px; right: 16px; width: 46px; height: 46px; font-size: 1.2rem; }
+  #theme-panel { bottom: 70px; right: 16px; min-width: 170px; }
+}

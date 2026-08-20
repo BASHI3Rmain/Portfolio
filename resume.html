@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bashar Shaaban | Resume</title>
+    <script>(function(){try{var t=localStorage.getItem('site-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <link rel="stylesheet" href="theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* Base Page Styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text, #333);
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #fafafa;
+            background-color: var(--bg, #fafafa);
         }
 
         /* Header Area */
@@ -25,11 +28,12 @@
         header h1 {
             margin-bottom: 5px;
             font-size: 2.5rem;
-            color: #222;
+            color: var(--heading-color, #222);
+            font-family: var(--font-heading, inherit);
         }
 
         header p {
-            color: #666;
+            color: var(--text-muted, #666);
             font-size: 1.1rem;
             margin-top: 0;
         }
@@ -38,7 +42,7 @@
         .tab-navigation {
             display: flex;
             justify-content: center;
-            border-bottom: 2px solid #ccc;
+            border-bottom: 2px solid var(--border, #ccc);
             margin-bottom: 30px;
             padding-bottom: 0;
         }
@@ -46,35 +50,35 @@
         /* Individual Tab Styling */
         .tab-link {
             text-decoration: none;
-            color: #555;
+            color: var(--text-muted, #555);
             padding: 10px 25px;
             font-size: 1.1rem;
             font-weight: bold;
             border: 1px solid transparent;
             border-bottom: none;
-            border-radius: 8px 8px 0 0;
+            border-radius: var(--radius, 8px) var(--radius, 8px) 0 0;
             margin: 0 5px -2px 5px; 
             transition: all 0.2s ease-in-out;
         }
 
         .tab-link:hover {
-            background-color: #f0f0f0;
-            color: #000;
+            background-color: var(--nav-hover-bg, #f0f0f0);
+            color: var(--text, #000);
         }
 
         .tab-link.active {
-            background-color: #fff;
-            color: #0056b3; 
-            border-color: #ccc;
-            border-bottom: 2px solid #fff; 
+            background-color: var(--card-bg, #fff);
+            color: var(--accent, #0056b3); 
+            border-color: var(--border, #ccc);
+            border-bottom: 2px solid var(--card-bg, #fff); 
         }
 
         /* Layout Content Box */
         .resume-container {
-            background: #fff;
+            background: var(--card-bg, #fff);
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: var(--radius, 8px);
+            box-shadow: 0 2px 4px var(--card-shadow, rgba(0,0,0,0.05));
         }
 
         /* Download Button Styling */
@@ -88,7 +92,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background-color: #0056b3;
+            background-color: var(--accent, #0056b3);
             color: white;
             text-decoration: none;
             padding: 10px 20px;
@@ -99,16 +103,17 @@
         }
 
         .download-btn:hover {
-            background-color: #004085;
+            background-color: var(--accent-hover, #004085);
         }
 
         /* Resume Section Headers */
         h2 {
-            border-bottom: 2px solid #eaeaea;
+            border-bottom: 2px solid var(--border-light, #eaeaea);
             padding-bottom: 10px;
             margin-top: 0;
-            color: #222;
+            color: var(--heading-color, #222);
             margin-bottom: 20px;
+            font-family: var(--font-heading, inherit);
         }
 
         .resume-section {
@@ -133,7 +138,7 @@
         }
 
         .skills-category h3 {
-            color: #0056b3;
+            color: var(--accent, #0056b3);
             margin-top: 0;
         }
 
@@ -141,7 +146,7 @@
         .job-card {
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 1px dashed #eaeaea;
+            border-bottom: 1px dashed var(--border-light, #eaeaea);
         }
 
         .job-card:last-child {
@@ -160,12 +165,12 @@
 
         .job-header h3 {
             margin: 0;
-            color: #0056b3;
+            color: var(--accent, #0056b3);
             font-size: 1.2rem;
         }
 
         .job-meta {
-            color: #666;
+            color: var(--text-muted, #666);
             font-size: 0.95rem;
         }
 
@@ -284,5 +289,6 @@
         </div>
     </main>
 
+<script src="theme.js" defer></script>
 </body>
 </html>
