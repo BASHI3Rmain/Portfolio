@@ -148,8 +148,10 @@
         /* Carousel Container */
 .carousel-container {
     position: relative;
-    max-width: 100%;
-    height: 420px; /* fixed so every slide (photo or video) takes up the same space */
+    width: 100%;
+    aspect-ratio: 16 / 9; /* scales with width instead of a fixed pixel height, so the crop
+                             window keeps the same shape on any screen size — a fixed height
+                             here is what was causing the bad crop on narrow phone widths */
     margin: 20px 0;
     overflow: hidden;
     border-radius: 8px;
@@ -209,7 +211,7 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(25px, 25px, 25px, 0.4);
+    background: rgba(25, 25, 25, 0.5); /* was invalid rgba(25px,25px,25px,.4) — silently dropped, leaving no visible background at all */
     color: white;
     border: none;
     font-size: 1.5rem;
@@ -252,6 +254,28 @@
 
 .dot.active, .dot:hover {
     background-color: #fff;
+}
+
+/* Scale the controls down a bit on narrow screens so they don't crowd a
+   much shorter carousel box (the box is now proportional to width via
+   aspect-ratio, so it's noticeably shorter on a phone than on desktop). */
+@media (max-width: 480px) {
+    .carousel-btn {
+        font-size: 1.1rem;
+        padding: 8px 11px;
+    }
+    .carousel-caption {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    .carousel-dots {
+        bottom: 34px;
+    }
+    .dot {
+        height: 8px;
+        width: 8px;
+        margin: 0 4px;
+    }
 }
 
 /* Fade Animation Keyframes */
@@ -543,7 +567,7 @@
            
            <!-- Robotics maze clip-->
            <div class="carousel-item">
-    <video id="gazebo-video" class="carousel-video" autoplay muted playsinline>
+    <video id="maze-video" class="carousel-video" autoplay muted playsinline>
         <source src="Maze Demo.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
