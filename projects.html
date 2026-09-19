@@ -340,7 +340,7 @@
            <!-- Gazebo building clip-->
            <div class="carousel-item">
     <video id="gazebo-video" class="carousel-video" autoplay muted playsinline>
-        <source src="gazebo1.mp4" type="video/mp4">
+        <source src="Project_Images/gazebo1.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <div class="carousel-caption">Building Gazebo Montage</div>
@@ -355,13 +355,13 @@
             <!-- Slide 0 -->
             <div class="carousel-item active">
                 <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
-                <img src="gazebooutside1.jpg" alt="Outside of gazebo home theatre setup">
+                <img src="Project_Images/gazebooutside1.jpg" alt="Outside of gazebo home theatre setup">
                 <div class="carousel-caption">Outside of Gazebo</div>
             </div>
             <!-- Slide 1 -->
             <div class="carousel-item">
                 <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
-                <img src="gazeboinside1.jpg" alt="Inside of gazebo home theatre setup">
+                <img src="Project_Images/gazeboinside1.jpg" alt="Inside of gazebo home theatre setup">
                 <div class="carousel-caption">Inside of Gazebo (day)</div>
                 </div>
 
@@ -374,18 +374,18 @@
             
             <!-- Slide 2 -->
             <div class="carousel-item">
-                <img src="projectormount.jpg" alt="Custom moveable projector ceiling mount">
+                <img src="Project_Images/projectormount.jpg" alt="Custom moveable projector ceiling mount">
                 <div class="carousel-caption">Custom Moveable Projector Ceiling Mount</div>
             </div>
             
             <!-- Slide 3 -->
             <div class="carousel-item">
-                <img src="projectorcasing.jpg" alt="Projector Casing">
+                <img src="Project_Images/projectorcasing.jpg" alt="Projector Casing">
                 <div class="carousel-caption">Designed and prototyped projector casing</div>
             </div>
             <!-- Slide 4 -->
             <div class="carousel-item">
-                <img src="Solar Panel Clip-On.png" alt="Solar Panel Clip-On">
+                <img src="Project_Images/Solar Panel Clip-On.png" alt="Solar Panel Clip-On">
                 <div class="carousel-caption">Designed and prototyped solar panel clip-on for lights</div>
             </div>
         </div>
@@ -435,6 +435,68 @@
 
 <div class="project-card">
     <div class="project-header">
+        <h3>Raspberry Pi Digital Voltmeter (Embedded Systems)</h3>
+        <span class="project-meta"><strong>University of Guelph</strong> | ENGG*3640</span>
+    </div>
+    
+    <p>
+        Designed and built a real-time digital voltmeter utilizing a Raspberry Pi 4B, an ADS1015 ADC via I²C communication, and a 3-digit 7-segment LED display driven by NPN transistor multiplexing.
+    </p>
+
+    <!-- The Carousel -->
+    <div class="carousel-container">
+        <div class="carousel-slide">
+            <!-- Slide 1: Hardware Breadboard Circuit -->
+            <div class="carousel-item">
+                <img src="Project_Images/voltmeter-breadboard.png" alt="Breadboard Circuit with 7-Segment Display and Raspberry Pi">
+                <div class="carousel-caption">Multiplexed 7-segment LED display with transistor drivers and Raspberry Pi setup</div>
+            </div>
+
+            <!-- Slide 2: Oscilloscope Signal Verification -->
+            <div class="carousel-item">
+                <img src="Project_Images/voltmeter-oscilloscope.png" alt="Tektronix Oscilloscope showing 0V to 3V Square Wave">
+                <div class="carousel-caption">Tektronix MSO 2024B Oscilloscope verifying 0V to 3V step response signal</div>
+            </div>
+
+            <!-- Slide 3: Function Generator Input -->
+            <div class="carousel-item">
+                <img src="Project_Images/voltmeter-generator.png" alt="BK Precision Function Generator running at 2 Hz">
+                <div class="carousel-caption">BK Precision 4017A Function Generator delivering a 2 Hz test signal</div>
+            </div>
+
+            <!-- Slide 4: Linux Terminal Output -->
+            <div class="carousel-item">
+                <img src="Project_Images/voltmeter-terminal.png" alt="Linux Terminal showing ADC continuous voltage output readings">
+                <div class="carousel-caption">Raspberry Pi terminal running C program with real-time ADC voltage outputs</div>
+            </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="carousel-btn prev-btn" onclick="moveSlide(this, -1)">&#10094;</button>
+        <button class="carousel-btn next-btn" onclick="moveSlide(this, 1)">&#10095;</button>
+
+        <!-- Bottom Indicator Dots -->
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(this, 0)"></span>
+            <span class="dot" onclick="currentSlide(this, 1)"></span>
+            <span class="dot" onclick="currentSlide(this, 2)"></span>
+            <span class="dot" onclick="currentSlide(this, 3)"></span>
+        </div>
+    </div> <!-- End of carousel-container -->
+
+    <!-- Bullet Points -->
+    <ul>
+        <li>Engineered low-level C code utilizing the <code>lgpio</code> library to manage I²C read/write operations with an ADS1015 12-bit ADC on the Waveshare SenseHAT module.</li>
+        <li>Implemented time-division multiplexing above 50 Hz to drive a common-cathode 3-digit 7-segment display without visible flicker.</li>
+        <li>Designed NPN transistor switching stages (2N2222) and 320Ω current-limiting resistors to isolate low-power GPIO outputs from high-current LED loads.</li>
+        <li>Calibrated and validated accurate continuous DC voltage measurement (0.00V to 3.00V) against a Tektronix MSO2024B Oscilloscope and BK Precision Function Generator.</li>
+    </ul>
+</div>
+
+
+
+<div class="project-card">
+    <div class="project-header">
         <h3>Autonomous Mobile Device (Engineering Design)</h3>
         <span class="project-meta"><strong>University of Guelph</strong> | Fall 2022 – 2023</span>
     </div>
@@ -444,14 +506,14 @@
     <div class="carousel-container">
         <!-- 1st photo -->
         <div class="carousel-item">
-                <img src="Cart1.jpg" alt="Full Cart Preview">
+                <img src="Project_Images/Cart1.jpg" alt="Full Cart Preview">
                 <div class="carousel-caption">Finalized Cart</div>
          </div>
 
     <!--  clip of it working-->
          <div class="carousel-item">
     <video class="carousel-video" autoplay muted playsinline>
-        <source src="Cart.mp4" type="video/mp4">
+        <source src="Project_Images/Cart.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <div class="carousel-caption">Cart test shooting projectile</div>
@@ -459,7 +521,7 @@
             
             <!-- 2nd photo -->
             <div class="carousel-item">
-                <img src="electromagnet_cart.jpg" alt="Electric magnetic Launcher">
+                <img src="Project_Images/electromagnet_cart.jpg" alt="Electric magnetic Launcher">
                 <div class="carousel-caption">Electro magnet used to trigger launcher</div>
             </div>  
 
@@ -506,13 +568,13 @@
             
             <!-- 1st photo -->
             <div class="carousel-item">
-                <img src="Apple Computer Conversion.jpg" alt="Refurbished Apple Computer Conversion Casing">
+                <img src="Project_Images/Apple Computer Conversion.jpg" alt="Refurbished Apple Computer Conversion Casing">
                 <div class="carousel-caption">Preprietary Refurbished Apple Computer Conversion Casing to be modded for ATX</div>
             </div>  
 
          <!-- 1st photo -->
             <div class="carousel-item">
-                <img src="Custom PSU.jpg" alt="PSU and custom wiring">
+                <img src="Project_Images/Custom PSU.jpg" alt="PSU and custom wiring">
                 <div class="carousel-caption">Custom PSU, wiring and fitting</div>
             </div>  
             
