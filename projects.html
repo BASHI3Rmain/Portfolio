@@ -550,10 +550,80 @@
 </div>
 
 
+
+<div class="project-card">
+    <div class="project-header">
+        <h3>4-bit 7 Segment Decoder Arithmetic Logic Unit (Digital System Design)</h3>
+        <span class="project-meta"><strong>University of Guelph</strong> | ENGG*2410</span>
+    </div>
+    
+    <p>
+        Designed and implemented a 4-bit Arithmetic Logic Unit (ALU which is a sub-circuit in the CPU) using 4 button inputs hierarchical VHDL on a Xilinx Nexys 3 FPGA development board, integrating multi-mode arithmetic/logic selection and a 7-segment output display <u>from scratch<u>.
+    </p>
+
+    <!-- The Carousel -->
+    <div class="carousel-container">
+        <div class="carousel-slide">
+            <!-- Slide 1: Hardware Implementation -->
+            <div class="carousel-item">
+                <img src="Project_Images/alu-nexys3-hardware.jpg" alt="Digilent Nexys 3 FPGA displaying ALU operation on 7-segment display">
+                <div class="carousel-caption">Digilent Nexys 3 FPGA board running the VHDL ALU design with active switch inputs and 7-segment LED output</div>
+            </div>
+
+            <!-- Slide 2: Hierarchical Circuit & Gate Diagrams -->
+            <div class="carousel-item">
+                <img src="Project_Images/alu-circuit-schematic.png" alt="Schematic diagram showing 4-bit ALU hierarchical structure and logic gates">
+                <div class="carousel-caption">Hierarchical block diagram showing 1-bit ALU stages, B-input logic multiplexing, full adders, and 7-segment decoder</div>
+            </div>
+
+            <!-- Slide 3: ISim Simulation Waveforms -->
+            <div class="carousel-item">
+                <img src="Project_Images/alu-waveform-simulation.png" alt="Xilinx ISim waveform simulation verifying arithmetic and logic operations">
+                <div class="carousel-caption">Xilinx ISim timing waveform verifying ALU function select outputs, carry-out behavior, and testbench cases</div>
+            </div>
+
+            <!-- Slide 4: Truth Table & Logic Equations -->
+            <div class="carousel-item">
+                <img src="Project_Images/alu-truth-table.png" alt="Hand-drawn K-maps and truth tables for 1 ALU stage design">
+                <div class="carousel-caption">K-map derivations and truth table specifications for arithmetic and logic selection modes</div>
+            </div>
+<!-- Slide 5: FSM State Transition Table -->
+            <div class="carousel-item">
+                <img src="Project_Images/fsm-state-transition-table.png" alt="State transition table for sequential controller with states S0 to S4">
+                <div class="carousel-caption">Finite State Machine (FSM) state transition table mapping state variables (Q2, Q1, Q0), input X, and next states (S0–S4) for sequential control logic</div>
+            </div>
+        </div>
+           
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="carousel-btn prev-btn" onclick="moveSlide(this, -1)">&#10094;</button>
+        <button class="carousel-btn next-btn" onclick="moveSlide(this, 1)">&#10095;</button>
+
+        <!-- Bottom Indicator Dots -->
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(this, 0)"></span>
+            <span class="dot" onclick="currentSlide(this, 1)"></span>
+            <span class="dot" onclick="currentSlide(this, 2)"></span>
+            <span class="dot" onclick="currentSlide(this, 3)"></span> 
+            <span class="dot" onclick="currentSlide(this, 4)"></span>
+        </div>
+    </div> <!-- End of carousel-container -->
+
+    <!-- Bullet Points -->
+    <ul>
+        <li>Engineered a 4-bit single-stage ALU in VHDL using a modular design approach composed of full adders, B-input logic stages, a 2-to-1 mode multiplexer, and a 7-segment decoder.</li>
+        <li>Implemented 16 distinct operations via mode selection line S_2 (Arithmetic vs. Logic) and selection controls S_1, S_0, C_in, including 4-bit addition, subtraction, transfer, bitwise AND, OR, XOR, and 1's complement.</li>
+        <li>Simulated and verified system timing using Xilinx ISim testbenches, validating arithmetic calculations, carry-out flags C_out, and boundary conditions across all select modes.</li>
+        <li>Mapped User Constraint Files (UCF) to program DIP switches for inputs A and B, pushbuttons for mode selection, and onboard common-cathode 7-segment displays for hexadecimal output visualization on the Nexys 3 FPGA.</li>
+    </ul>
+</div>
+
+
 <div class="project-card">
     <div class="project-header">
         <h3>DC Motor Closed-Loop Control System (Control Systems)</h3>
-        <span class="project-meta"><strong>University of Guelph</strong> | ENGG*3410</span>
+        <span class="project-meta"><strong>University of Guelph</strong> | Fall 2023</span>
     </div>
     
     <p>
