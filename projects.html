@@ -178,18 +178,20 @@
     display: block;
 }
 
-/* Enforce proportional image constraints - fills the fixed-height container */
+/* Shows the ENTIRE image, letterboxed on the dark background if its aspect
+   ratio doesn't match the frame — nothing is ever cropped/cut off, which
+   matters a lot for diagrams and screenshots (not just casual photos). */
 .carousel-item img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Crops cleanly without squeezing or warping your pictures */
+    object-fit: contain;
     display: block;
 }
 /* Ensure the video scales identically to the images */
 .carousel-video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Crops the video cleanly without stretching it */
+    object-fit: contain;
     display: block;
 }
 
@@ -592,9 +594,9 @@
                 <img src="Project_Images/fsm-state-transition-table.png" alt="State transition table for sequential controller with states S0 to S4">
                 <div class="carousel-caption">Finite State Machine (FSM) state transition table mapping state variables (Q2, Q1, Q0), input X, and next states (S0–S4) for sequential control logic</div>
             </div>
-        </div>
+     
            
-        
+        </div>
 
         <!-- Navigation Arrows -->
         <button class="carousel-btn prev-btn" onclick="moveSlide(this, -1)">&#10094;</button>
