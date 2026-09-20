@@ -982,15 +982,23 @@ function showSlide(container, index) {
     // --- VIDEO CHECK: If active slide has a video, pause auto-timer & play video ---
     const video = activeSlide.querySelector('video');
     if (video) {
-        if (state.timer) clearInterval(state.timer); // Stop 2.5s timer so it won't skip!
+        if (state.timer) { clearTimeout(state.timer); state.timer = null; } // Stop timer so it won't skip!
         video.currentTime = 0;
         video.play().catch(e => console.log("Autoplay blocked:", e));
     }
 }
 
-function resetTimer(container) {
-    const state = carouselState.get(container);
-    if (state && state.timer) clearInterval(state.timer);
+function resetTimer(container, delay = 2500) {
+    const state = carouselState.get(container) || { index: 0 };
+    if (state.timer) clearTimeout(state.timer);
+    state.timer = null;
+    carouselState.set(container, state);
+
+    // While the mouse is over this carousel, never (re-)arm a timer — this
+    // covers not just the moment the mouse enters, but also any click that
+    // happens while still hovering (a dot/arrow click used to silently
+    // re-schedule the timer even mid-hover, undoing the pause).
+    if (state.hovering) return;
 
     // Only set a timer if the CURRENT active slide does NOT have a video running
     const activeSlide = container.querySelector('.carousel-item.active');
@@ -998,21 +1006,27 @@ function resetTimer(container) {
         return; // Don't start timer while video is active
     }
 
-    const timer = setInterval(() => moveSlide(container, 1), 2500);
-    carouselState.set(container, { ...(state || { index: 0 }), timer });
+    // A one-shot timer (not setInterval) so each advance can request its own
+    // delay for the NEXT one — a manual click asks for a longer pause here,
+    // while the automatic tick below always asks for the normal cadence.
+    state.timer = setTimeout(() => moveSlide(container, 1, false), delay);
+    carouselState.set(container, state);
 }
 
-function moveSlide(el, step) {
+// isManual defaults to true because the prev/next buttons call this with
+// just (el, step) via their onclick attributes — a real click. Automatic
+// advances (the timer tick, the video-ended handler) explicitly pass false.
+function moveSlide(el, step, isManual = true) {
     const container = el instanceof Element ? getContainer(el) : el;
     const state = carouselState.get(container) || { index: 0 };
     showSlide(container, state.index + step);
-    resetTimer(container);
+    resetTimer(container, isManual ? 5000 : 2500);
 }
 
 function currentSlide(el, index) {
     const container = getContainer(el);
     showSlide(container, index);
-    resetTimer(container);
+    resetTimer(container, 5000); // clicking a dot is always a deliberate stop
 }
 
 // Initialize on page load
@@ -1022,16 +1036,21 @@ document.addEventListener("DOMContentLoaded", function() {
         showSlide(container, 0);
         resetTimer(container);
 
-        // Pause auto-advance on mouse hover
+        // Pause auto-advance for as long as the mouse stays over this
+        // carousel — resetTimer checks this flag every time it's called,
+        // so a click on a dot/arrow mid-hover can't sneak a new timer past it.
         container.addEventListener('mouseenter', () => {
-            const state = carouselState.get(container);
-            if (state && state.timer) {
-                clearInterval(state.timer);
-            }
+            const state = carouselState.get(container) || { index: 0 };
+            state.hovering = true;
+            if (state.timer) { clearTimeout(state.timer); state.timer = null; }
+            carouselState.set(container, state);
         });
 
-        // Resume auto-advance when mouse leaves
+        // Resume auto-advance when the mouse actually leaves
         container.addEventListener('mouseleave', () => {
+            const state = carouselState.get(container) || { index: 0 };
+            state.hovering = false;
+            carouselState.set(container, state);
             resetTimer(container);
         });
     });
@@ -1041,7 +1060,7 @@ document.addEventListener("DOMContentLoaded", function() {
         vid.addEventListener('ended', () => {
             const container = vid.closest('.carousel-container');
             if (container) {
-                moveSlide(container, 1);
+                moveSlide(container, 1, false);
             }
         });
     });
