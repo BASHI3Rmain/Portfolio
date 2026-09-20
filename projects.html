@@ -992,6 +992,10 @@ function resetTimer(container, delay = 2500) {
     const state = carouselState.get(container) || { index: 0 };
     if (state.timer) clearTimeout(state.timer);
     state.timer = null;
+    // Remember the requested delay regardless of whether we can schedule it
+    // right now — if the mouse is hovering, this is picked back up by the
+    // mouseleave handler instead of being lost in favor of the plain default.
+    state.nextDelay = delay;
     carouselState.set(container, state);
 
     // While the mouse is over this carousel, never (re-)arm a timer — this
@@ -1046,12 +1050,15 @@ document.addEventListener("DOMContentLoaded", function() {
             carouselState.set(container, state);
         });
 
-        // Resume auto-advance when the mouse actually leaves
+        // Resume auto-advance when the mouse actually leaves — using
+        // whatever delay was last requested (e.g. still 5000 if the last
+        // thing that happened was a manual click during the hover), not
+        // just the plain default.
         container.addEventListener('mouseleave', () => {
             const state = carouselState.get(container) || { index: 0 };
             state.hovering = false;
             carouselState.set(container, state);
-            resetTimer(container);
+            resetTimer(container, state.nextDelay ?? 2500);
         });
     });
 
