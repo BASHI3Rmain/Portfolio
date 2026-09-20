@@ -178,9 +178,10 @@
     display: block;
 }
 
-/* Shows the ENTIRE image, letterboxed on the dark background if its aspect
-   ratio doesn't match the frame — nothing is ever cropped/cut off, which
-   matters a lot for diagrams and screenshots (not just casual photos). */
+/* Default for every carousel: show the ENTIRE image, letterboxed on the
+   dark background if its aspect ratio doesn't match the frame — nothing is
+   ever cropped/cut off. This matters a lot for diagrams, screenshots, and
+   plots (not just casual photos), so it's the safe default everywhere. */
 .carousel-item img {
     width: 100%;
     height: 100%;
@@ -193,6 +194,18 @@
     height: 100%;
     object-fit: contain;
     display: block;
+}
+
+/* Per-carousel override: add class="carousel-container fit-cover" to any
+   ONE carousel's container div (not this shared stylesheet) to make just
+   that carousel crop-to-fill its frame instead of letterboxing — nicer for
+   a carousel that's pure casual photography, where losing a sliver off an
+   edge doesn't matter and filling the frame looks better. Leave the class
+   off (the default above) for anything with diagrams, screenshots, plots,
+   or text where cropping could cut off real content. */
+.carousel-container.fit-cover .carousel-item img,
+.carousel-container.fit-cover .carousel-video {
+    object-fit: cover;
 }
 
 /* Captions at the bottom */
