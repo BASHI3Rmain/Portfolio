@@ -546,7 +546,7 @@
 <div class="project-card">
     <div class="project-header">
         <h3>Raspberry Pi Digital Voltmeter (Embedded Systems)</h3>
-        <span class="project-meta"><strong>University of Guelph</strong> | ENGG*3640</span>
+        <span class="project-meta"><strong>University of Guelph</strong> | Winter 2025</span>
     </div>
     
     <p>
@@ -608,7 +608,7 @@
 <div class="project-card">
     <div class="project-header">
         <h3>4-bit 7 Segment Decoder Arithmetic Logic Unit (Digital System Design)</h3>
-        <span class="project-meta"><strong>University of Guelph</strong> | ENGG*2410</span>
+        <span class="project-meta"><strong>University of Guelph</strong> | Winter 2025</span>
     </div>
     
     <p>
@@ -677,11 +677,11 @@
 
 
 
-          <!-- Design 1 -->
+          <!-- Design 2 -->
 <div class="project-card">
     <div class="project-header">
         <h3>Solidworks Design and 3D Modeling</h3>
-        <span class="project-meta"><strong>University of Guelph</strong> | Fall 2023</span>
+        <span class="project-meta"><strong>University of Guelph</strong> | Winter 2025</span>
     </div>
     
     <p>Designed, modeled, and developed various toys for educational and recreational purposes. </p>
@@ -743,7 +743,7 @@
     <div class="project-card">
     <div class="project-header">
         <h3>DC Motor Closed-Loop Control System (Control Systems)</h3>
-        <span class="project-meta"><strong>University of Guelph</strong> | Fall 2023</span>
+        <span class="project-meta"><strong>University of Guelph</strong> | Fall 2024</span>
     </div>
     
     <p>
@@ -1024,13 +1024,13 @@ function moveSlide(el, step, isManual = true) {
     const container = el instanceof Element ? getContainer(el) : el;
     const state = carouselState.get(container) || { index: 0 };
     showSlide(container, state.index + step);
-    resetTimer(container, isManual ? 5000 : 2500);
+    resetTimer(container, isManual ? 4000 : 2500);
 }
 
 function currentSlide(el, index) {
     const container = getContainer(el);
     showSlide(container, index);
-    resetTimer(container, 5000); // clicking a dot is always a deliberate stop
+    resetTimer(container, 4000); // clicking a dot is always a deliberate stop
 }
 
 // Initialize on page load
@@ -1051,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // Resume auto-advance when the mouse actually leaves — using
-        // whatever delay was last requested (e.g. still 5000 if the last
+        // whatever delay was last requested (e.g. still 4000 if the last
         // thing that happened was a manual click during the hover), not
         // just the plain default.
         container.addEventListener('mouseleave', () => {
