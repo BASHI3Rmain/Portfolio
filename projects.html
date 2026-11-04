@@ -374,99 +374,6 @@
 
             
 
-          <!-- Home Theatre Project Section -->
-<div class="project-card">
-    <div class="project-header">
-        <h3>Home Theatre</h3>
-        <span class="project-meta"><strong>Home</strong> | Summer 2026</span>
-    </div>
-    
-    <p>Created a backyard home theatre with many self-designed and manufactured functionalities.</p>
-
-    <!-- 1. The Carousel (Purely for photos) -->
-    <div class="carousel-container">
-        <div class="carousel-slide">
-           
-           <!-- Gazebo building clip-->
-           <div class="carousel-item">
-    <video id="gazebo-video" class="carousel-video" autoplay muted playsinline>
-        <source src="Project_Images/gazebo1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div class="carousel-caption">Building Gazebo Montage</div>
-</div>
-            <!-- Gazebo V1
-            <div class="carousel-item">
-                 --Make sure 'gazebo1.jpg' matches your actual file name! --
-                <img src="gazebooutside0.jpg" alt="Inside of gazebo home theatre setup">
-                <div class="carousel-caption">Completed Gazebo Construction</div>
-            </div>-->
-            
-            <!-- Slide 0 -->
-            <div class="carousel-item active">
-                <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
-                <img src="Project_Images/gazebooutside1.jpg" alt="Outside of gazebo home theatre setup">
-                <div class="carousel-caption">Outside of Gazebo</div>
-            </div>
-            <!-- Slide 1 -->
-            <div class="carousel-item">
-                <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
-                <img src="Project_Images/gazeboinside1.jpg" alt="Inside of gazebo home theatre setup">
-                <div class="carousel-caption">Inside of Gazebo (day)</div>
-                </div>
-
-           <!-- <div class="carousel-item">
-               
-                <img src="gazeboinsidenight.jpg" alt="Inside of gazebo home theatre setup">
-                <div class="carousel-caption">Inside of Gazebo (night)</div>
-            </div>-->
-
-            
-            <!-- Slide 2 -->
-            <div class="carousel-item">
-                <img src="Project_Images/projectormount.jpg" alt="Custom moveable projector ceiling mount">
-                <div class="carousel-caption">Custom Moveable Projector Ceiling Mount</div>
-            </div>
-            
-            <!-- Slide 3 -->
-            <div class="carousel-item">
-                <img src="Project_Images/projectorcasing.jpg" alt="Projector Casing">
-                <div class="carousel-caption">Designed and prototyped projector casing</div>
-            </div>
-            <!-- Slide 4 -->
-            <div class="carousel-item">
-                <img src="Project_Images/Solar Panel Clip-On.png" alt="Solar Panel Clip-On">
-                <div class="carousel-caption">Designed and prototyped solar panel clip-on for lights</div>
-            </div>
-        </div>
-
-        <!-- Navigation Arrows -->
-        <button class="carousel-btn prev-btn" onclick="moveSlide(this,-1)">&#10094;</button>
-        <button class="carousel-btn next-btn" onclick="moveSlide(this,1)">&#10095;</button>
-
-        <!-- Bottom Indicator Dots -->
-        <div class="carousel-dots">
-            <span class="dot active" onclick="currentSlide(this,0)"></span>
-            <span class="dot" onclick="currentSlide(this,1)"></span>
-            <span class="dot" onclick="currentSlide(this,2)"></span>
-            <span class="dot" onclick="currentSlide(this,3)"></span>
-            <span class="dot" onclick="currentSlide(this,4)"></span>
-            <span class="dot" onclick="currentSlide(this,5)"></span>
-        </div>
-        
-        </div>
-           <!-- 2. The Bullet Points (Now safely outside and underneath the carousel) -->
-    <ul class="project-details">
-        <li>Modified gazebo with custom self-designed moveable projector ceiling mount.</li>
-        <li>Customized speaker system, karaoke, and entertainment systems with attachments to minimize sound leakage.</li>
-        <li>Modded gaming systems from scratch.</li>
-    </ul>
-
-    </div>
-
- 
-
-
  <!-- Self-Designed 3D Models -->
           <div class="project-card">
                 <div class="project-header">
@@ -604,6 +511,68 @@
     </ul>
 </div>
 
+ <!--  Real-time systems Project -->
+<div class="project-card">
+    <div class="project-header">
+        <h3>Adaptive Cruise Control and Morse-code Decoder (Real-Time Systems)</h3>
+        <span class="project-meta"><strong>University of Guelph</strong> | Fall 2026</span>
+    </div>
+    
+    <p>
+        Designed and built a real-time system ACC car controls coded in uC/OSS-III and RTOS with schematics, displays, statuses, and following distance emergency protocols.
+    </p>
+
+   
+    <div class="carousel-container">
+        <div class="carousel-slide">
+            <!-- Slide 1: Schematics  -->
+            <div class="carousel-item">
+                <img src="Project_Images/.png" alt="Schematics">
+                <div class="carousel-caption">Schematics of self-developed ACC system</div>
+            </div>
+
+            <!-- Slide 2: Block Diagram -->
+            <div class="carousel-item">
+                <img src="Project_Images/.png" alt="Block Diagram">
+                <div class="carousel-caption">Block Diagram of ACC system</div>
+            </div>
+
+            <!-- Slide 3: ACC Example -->
+            <div class="carousel-item">
+                <img src="Project_Images/.png" alt="Demo of ACC">
+                <div class="carousel-caption">Demo of ACC system</div>
+            </div>
+
+            <!-- Slide 4: Morse Code EX -->
+            <div class="carousel-item">
+                <img src="Project_Images/.png" alt="Demo of Morse-Code system">
+                <div class="carousel-caption">Demo of Morse-Code decoder</div>
+            </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="carousel-btn prev-btn" onclick="moveSlide(this, -1)">&#10094;</button>
+        <button class="carousel-btn next-btn" onclick="moveSlide(this, 1)">&#10095;</button>
+
+        <!-- Bottom Indicator Dots -->
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(this, 0)"></span>
+            <span class="dot" onclick="currentSlide(this, 1)"></span>
+            <span class="dot" onclick="currentSlide(this, 2)"></span>
+            <span class="dot" onclick="currentSlide(this, 3)"></span>
+        </div>
+    </div> <!-- End of carousel-container -->
+
+    <!-- Bullet Points -->
+    <ul>
+        <li>Coded in uC/OSS-III and RTOS to develop, code, and test multiple lightning fast responsive Real-Time Systems.</li>
+        <li>Utilized softwares including TeraTerm, STM32CubeIDE, LabView and other simulation softwares.</li>
+        <li>Designed on and for the STM32F429I-DISC1.</li>
+        
+    </ul>
+</div>
+
+
 
  <!-- ALU Digital Systems Implementation -->
 <div class="project-card">
@@ -676,6 +645,95 @@
 </div>
 
 
+          <!-- Home Theatre Project Section -->
+<div class="project-card">
+    <div class="project-header">
+        <h3>Home Theatre</h3>
+        <span class="project-meta"><strong>Home</strong> | Summer 2026</span>
+    </div>
+    
+    <p>Created a backyard home theatre with many self-designed and manufactured functionalities.</p>
+
+    <!-- 1. The Carousel (Purely for photos) -->
+    <div class="carousel-container">
+        <div class="carousel-slide">
+           
+           <!-- Gazebo building clip-->
+           <div class="carousel-item">
+    <video id="gazebo-video" class="carousel-video" autoplay muted playsinline>
+        <source src="Project_Images/gazebo1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="carousel-caption">Building Gazebo Montage</div>
+</div>
+            <!-- Gazebo V1
+            <div class="carousel-item">
+                 --Make sure 'gazebo1.jpg' matches your actual file name! --
+                <img src="gazebooutside0.jpg" alt="Inside of gazebo home theatre setup">
+                <div class="carousel-caption">Completed Gazebo Construction</div>
+            </div>-->
+            
+            <!-- Slide 0 -->
+            <div class="carousel-item active">
+                <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
+                <img src="Project_Images/gazebooutside1.jpg" alt="Outside of gazebo home theatre setup">
+                <div class="carousel-caption">Outside of Gazebo</div>
+            </div>
+            <!-- Slide 1 -->
+            <div class="carousel-item">
+                <!-- Make sure 'gazebo1.jpg' matches your actual file name! -->
+                <img src="Project_Images/gazeboinside1.jpg" alt="Inside of gazebo home theatre setup">
+                <div class="carousel-caption">Inside of Gazebo (day)</div>
+                </div>
+
+           <!-- <div class="carousel-item">
+               
+                <img src="gazeboinsidenight.jpg" alt="Inside of gazebo home theatre setup">
+                <div class="carousel-caption">Inside of Gazebo (night)</div>
+            </div>-->
+
+            
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+                <img src="Project_Images/projectormount.jpg" alt="Custom moveable projector ceiling mount">
+                <div class="carousel-caption">Custom Moveable Projector Ceiling Mount</div>
+            </div>
+            
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+                <img src="Project_Images/projectorcasing.jpg" alt="Projector Casing">
+                <div class="carousel-caption">Designed and prototyped projector casing</div>
+            </div>
+            <!-- Slide 4 -->
+            <div class="carousel-item">
+                <img src="Project_Images/Solar Panel Clip-On.png" alt="Solar Panel Clip-On">
+                <div class="carousel-caption">Designed and prototyped solar panel clip-on for lights</div>
+            </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="carousel-btn prev-btn" onclick="moveSlide(this,-1)">&#10094;</button>
+        <button class="carousel-btn next-btn" onclick="moveSlide(this,1)">&#10095;</button>
+
+        <!-- Bottom Indicator Dots -->
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(this,0)"></span>
+            <span class="dot" onclick="currentSlide(this,1)"></span>
+            <span class="dot" onclick="currentSlide(this,2)"></span>
+            <span class="dot" onclick="currentSlide(this,3)"></span>
+            <span class="dot" onclick="currentSlide(this,4)"></span>
+            <span class="dot" onclick="currentSlide(this,5)"></span>
+        </div>
+        
+        </div>
+           <!-- 2. The Bullet Points (Now safely outside and underneath the carousel) -->
+    <ul class="project-details">
+        <li>Modified gazebo with custom self-designed moveable projector ceiling mount.</li>
+        <li>Customized speaker system, karaoke, and entertainment systems with attachments to minimize sound leakage.</li>
+        <li>Modded gaming systems from scratch.</li>
+    </ul>
+
+    </div>
 
 
           <!-- Design 2 -->
